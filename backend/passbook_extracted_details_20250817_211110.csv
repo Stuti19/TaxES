@@ -1,0 +1,2 @@
+user_id,accountNumber,bankName,IFSC_Code,processed_date,source_file
+f0ede5de-9a73-4440-a320-1ace22c2859a,42546322492,SBI,SBIN0030450,17-08-2025 21:11,f0ede5de-9a73-4440-a320-1ace22c2859a/passbook.pdf
