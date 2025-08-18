@@ -30,7 +30,7 @@ s3_client = boto3.client(
 async def upload_documents(
     user_id: str = Form(...),
     aadhar: UploadFile = File(...),
-    bank_statement: UploadFile = File(...),
+    passbook: UploadFile = File(...),
     form16: UploadFile = File(...)
 ):
     bucket_name = os.getenv('S3_BUCKET_NAME')
@@ -42,7 +42,7 @@ async def upload_documents(
         raise HTTPException(status_code=500, detail="S3_BUCKET_NAME not configured")
     
     # Validate PDF files
-    files = [(aadhar, 'aadhar'), (bank_statement, 'bank_statement'), (form16, 'form16')]
+    files = [(aadhar, 'aadhar'), (passbook, 'passbook'), (form16, 'form16')]
     for file, doc_type in files:
         print(f"File: {file.filename}, Type: {doc_type}, Size: {file.size}")
         if not file.filename or not file.filename.lower().endswith('.pdf'):
@@ -99,7 +99,7 @@ async def upload_documents(
 async def get_user_documents(user_id: str):
     """Check which documents exist for a user"""
     bucket_name = os.getenv('S3_BUCKET_NAME')
-    doc_types = ['aadhar', 'bank_statement', 'form16']
+    doc_types = ['aadhar', 'passbook', 'form16']
     documents = {}
     
     for doc_type in doc_types:

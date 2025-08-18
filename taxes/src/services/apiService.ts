@@ -14,13 +14,13 @@ export interface UploadDocumentsResponse {
 export const uploadDocumentsToAPI = async (
   userId: string,
   aadharFile: File,
-  bankFile: File,
+  passbookFile: File,
   form16File: File
 ): Promise<UploadDocumentsResponse> => {
   const formData = new FormData();
   formData.append('user_id', userId);
   formData.append('aadhar', aadharFile);
-  formData.append('bank_statement', bankFile);
+  formData.append('passbook', passbookFile);
   formData.append('form16', form16File);
 
   const response = await fetch(`${API_BASE_URL}/upload-documents`, {

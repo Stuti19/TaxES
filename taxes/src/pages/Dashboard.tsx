@@ -110,10 +110,10 @@ export const Dashboard = () => {
     }
 
     const aadharFile = uploadedFiles.find(f => f.type === 'aadhar')?.file;
-    const bankFile = uploadedFiles.find(f => f.type === 'bank')?.file;
+    const passbookFile = uploadedFiles.find(f => f.type === 'bank')?.file;
     const form16File = uploadedFiles.find(f => f.type === 'form16')?.file;
 
-    if (!aadharFile || !bankFile || !form16File) {
+    if (!aadharFile || !passbookFile || !form16File) {
       toast.error("Missing required documents");
       return;
     }
@@ -126,7 +126,7 @@ export const Dashboard = () => {
       const result = await uploadDocumentsToAPI(
         user.id,
         aadharFile,
-        bankFile,
+        passbookFile,
         form16File
       );
       
