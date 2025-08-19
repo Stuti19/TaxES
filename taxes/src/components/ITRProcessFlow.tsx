@@ -18,31 +18,31 @@ import {
 } from "lucide-react";
 
 const itrTypes = [
-  {
-    type: "ITR-1",
-    title: "Sahaj",
-    description: "For individuals with salary income",
-    features: ["Salary Income", "House Property", "Other Sources"],
-    recommended: true
-  },
-  {
-    type: "ITR-2", 
-    title: "Standard",
-    description: "For individuals/HUFs with capital gains",
-    features: ["Capital Gains", "Multiple Sources", "Foreign Assets"]
-  },
-  {
-    type: "ITR-3",
-    title: "Business",
-    description: "For individuals with business income",
-    features: ["Business Income", "Professional Income", "Presumptive Taxation"]
-  },
-  {
-    type: "ITR-4",
-    title: "Sugam",
-    description: "For presumptive business income",
-    features: ["Presumptive Income", "Business < 2Cr", "Simple Filing"]
-  }
+  // {
+  //   type: "ITR-1",
+  //   title: "Sahaj",
+  //   description: "For individuals with salary income",
+  //   features: ["Salary Income", "House Property", "Other Sources"],
+  //   recommended: true
+  // },
+  // {
+  //   type: "ITR-2", 
+  //   title: "Standard",
+  //   description: "For individuals/HUFs with capital gains",
+  //   features: ["Capital Gains", "Multiple Sources", "Foreign Assets"]
+  // },
+  // {
+  //   type: "ITR-3",
+  //   title: "Business",
+  //   description: "For individuals with business income",
+  //   features: ["Business Income", "Professional Income", "Presumptive Taxation"]
+  // },
+  // {
+  //   type: "ITR-4",
+  //   title: "Sugam",
+  //   description: "For presumptive business income",
+  //   features: ["Presumptive Income", "Business < 2Cr", "Simple Filing"]
+  // }
 ];
 
 const processSteps = [
@@ -53,13 +53,13 @@ const processSteps = [
     icon: FileText,
     status: "completed"
   },
-  {
-    id: 2,
-    title: "Choose ITR Type",
-    description: "Select the appropriate ITR form",
-    icon: FileCheck,
-    status: "current"
-  },
+  // {
+  //   id: 2,
+  //   title: "Choose ITR Type",
+  //   description: "Select the appropriate ITR form",
+  //   icon: FileCheck,
+  //   status: "current"
+  // },
   {
     id: 3,
     title: "Upload Documents",
@@ -125,7 +125,7 @@ export const ITRProcessFlow = () => {
         <div className="flex items-center justify-center gap-2">
           <Sparkles className="w-6 h-6 text-primary" />
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Professional ITR Filing Process
+            ITR Filing Process
           </h1>
         </div>
         
@@ -203,9 +203,8 @@ export const ITRProcessFlow = () => {
       {currentStep === 2 && (
         <div className="space-y-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-2">Choose Your ITR Type</h2>
+            <h2 className="text-2xl font-bold mb-2"></h2>
             <p className="text-muted-foreground">
-              Select the ITR form that matches your income sources
             </p>
           </div>
 

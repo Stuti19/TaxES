@@ -46,10 +46,10 @@ def extract_text_from_s3_pdf(bucket, key):
 
 
 def normalize_dob(dob_str):
-    """Normalize DOB into YYYY-MM-DD"""
+    """Normalize DOB into dd/mm/yyyy"""
     for fmt in ("%d/%m/%Y", "%d-%m-%Y", "%d.%m.%Y", "%Y-%m-%d"):
         try:
-            return datetime.strptime(dob_str, fmt).strftime("%Y-%m-%d")
+            return datetime.strptime(dob_str, fmt).strftime("%d/%m/%Y")
         except ValueError:
             continue
     return dob_str
@@ -68,9 +68,19 @@ def extract_aadhar_details(lines):
     full_text = " ".join(lines)
 
     # ---------- Aadhaar Number ----------
-    match = re.search(r'\b(\d{4}\s?\d{4}\s?\d{4})\b', full_text)
-    if match:
-        details['aadhar_number'] = match.group(1).replace(" ", "")
+    # Try multiple patterns for Aadhaar number
+    aadhar_patterns = [
+        r'\b(\d{4}\s?\d{4}\s?\d{4})\b',
+        r'(\d{12})',
+        r'Aadhaar\s*No[.:]*\s*(\d{4}\s?\d{4}\s?\d{4})',
+        r'UID\s*[.:]*\s*(\d{4}\s?\d{4}\s?\d{4})'
+    ]
+    
+    for pattern in aadhar_patterns:
+        match = re.search(pattern, full_text, re.IGNORECASE)
+        if match:
+            details['aadhar_number'] = match.group(1).replace(" ", "")
+            break
 
     # ---------- DOB ----------
     dob_match = re.search(r'(?:DOB|Date of Birth)[:\s-]+(\d{1,2}[\/\-\s]\d{1,2}[\/\-\s]\d{4})', full_text, re.IGNORECASE)
@@ -87,24 +97,44 @@ def extract_aadhar_details(lines):
             break
 
     # ---------- Name ----------
-    # Case 1: Just above DOB
-    if details['dob']:
+    # Multiple strategies to find name
+    name_found = False
+    
+    # Strategy 1: Look for name patterns
+    for line in lines:
+        # Skip lines with numbers, government text, etc.
+        if any(x in line.lower() for x in ['government', 'india', 'dob', 'male', 'female', 'address']):
+            continue
+        if re.search(r'\d', line):  # Skip lines with numbers
+            continue
+        
+        # Check if line looks like a name (2-4 words, alphabetic)
+        words = line.strip().split()
+        if 2 <= len(words) <= 4 and all(word.isalpha() for word in words):
+            details['name'] = line.strip()
+            name_found = True
+            break
+    
+    # Strategy 2: Just above DOB
+    if not name_found and details['dob']:
         for i, line in enumerate(lines):
             if details['dob'].split("-")[0] in line or details['dob'].replace("-", "/") in line:
                 if i > 0:
                     candidate = lines[i-1].strip()
                     if len(candidate.split()) >= 2 and not any(ch.isdigit() for ch in candidate):
                         details['name'] = candidate
+                        name_found = True
                 break
-    # Case 2: fallback - first line after "Government of India"
-    if not details['name']:
+    
+    # Strategy 3: After "Government of India"
+    if not name_found:
         for i, line in enumerate(lines):
             if "government of india" in line.lower():
                 if i+1 < len(lines):
                     candidate = lines[i+1].strip()
                     if len(candidate.split()) >= 2:
                         details['name'] = candidate
-                break
+                        break
 
     # ---------- Address ----------
     address_lines = []
@@ -120,7 +150,10 @@ def extract_aadhar_details(lines):
                 continue
             if re.match(r'^\d{4}\s?\d{4}\s?\d{4}$', l):  # stop at Aadhaar number
                 break
-            address_lines.append(l)
+            # Filter out Hindi characters from address
+            english_only = re.sub(r'[\u0900-\u097F]', '', l)
+            if english_only.strip():
+                address_lines.append(english_only.strip())
     if address_lines:
         details['address'] = ", ".join(address_lines)
 
