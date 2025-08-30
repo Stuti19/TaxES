@@ -44,10 +44,10 @@ export const Dashboard = () => {
       color: "text-blue-500"
     },
     {
-      id: "bank",
-      name: "Bank Statements / Passbook",
+      id: "pan",
+      name: "PAN Card",
       icon: Building2,
-      description: "Upload bank statements or passbook PDF",
+      description: "Upload your PAN Card PDF",
       color: "text-green-500"
     },
     {
@@ -100,7 +100,7 @@ export const Dashboard = () => {
 
   const handleProcessDocuments = async () => {
     if (uploadedFiles.length < 3) {
-      toast.error("Please upload all three documents (Aadhar, Bank Statement, Form 16)");
+      toast.error("Please upload all three documents (Aadhar, PAN Card, Form 16)");
       return;
     }
 
@@ -110,10 +110,10 @@ export const Dashboard = () => {
     }
 
     const aadharFile = uploadedFiles.find(f => f.type === 'aadhar')?.file;
-    const passbookFile = uploadedFiles.find(f => f.type === 'bank')?.file;
+    const panFile = uploadedFiles.find(f => f.type === 'pan')?.file;
     const form16File = uploadedFiles.find(f => f.type === 'form16')?.file;
 
-    if (!aadharFile || !passbookFile || !form16File) {
+    if (!aadharFile || !panFile || !form16File) {
       toast.error("Missing required documents");
       return;
     }
@@ -126,7 +126,7 @@ export const Dashboard = () => {
       const result = await uploadDocumentsToAPI(
         user.id,
         aadharFile,
-        passbookFile,
+        panFile,
         form16File
       );
       
