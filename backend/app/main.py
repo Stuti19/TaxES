@@ -6,17 +6,25 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 from typing import List
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from form16_extractor import extract_form16
+from pydantic import BaseModel
 
 load_dotenv()
 
 app = FastAPI()
 
+class Form16Request(BaseModel):
+    user_id: str
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:8081", "http://localhost:3000"],
+    allow_origins=["http://localhost:5173", "http://localhost:8080", "http://localhost:8081", "http://localhost:3000"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 s3_client = boto3.client(
@@ -26,11 +34,15 @@ s3_client = boto3.client(
     region_name=os.getenv('AWS_REGION')
 )
 
+@app.options("/upload-documents")
+async def upload_documents_options():
+    return {"message": "OK"}
+
 @app.post("/upload-documents")
 async def upload_documents(
     user_id: str = Form(...),
     aadhar: UploadFile = File(...),
-    passbook: UploadFile = File(...),
+    pan: UploadFile = File(...),
     form16: UploadFile = File(...)
 ):
     bucket_name = os.getenv('S3_BUCKET_NAME')
@@ -42,7 +54,7 @@ async def upload_documents(
         raise HTTPException(status_code=500, detail="S3_BUCKET_NAME not configured")
     
     # Validate PDF files
-    files = [(aadhar, 'aadhar'), (passbook, 'passbook'), (form16, 'form16')]
+    files = [(aadhar, 'aadhar'), (pan, 'pan'), (form16, 'form16')]
     for file, doc_type in files:
         print(f"File: {file.filename}, Type: {doc_type}, Size: {file.size}")
         if not file.filename or not file.filename.lower().endswith('.pdf'):
@@ -99,7 +111,7 @@ async def upload_documents(
 async def get_user_documents(user_id: str):
     """Check which documents exist for a user"""
     bucket_name = os.getenv('S3_BUCKET_NAME')
-    doc_types = ['aadhar', 'passbook', 'form16']
+    doc_types = ['aadhar', 'pan', 'form16']
     documents = {}
     
     for doc_type in doc_types:
@@ -138,3 +150,21 @@ async def test_s3_connection():
         }
     except ClientError as e:
         raise HTTPException(status_code=500, detail=f"S3 connection failed: {str(e)}")
+
+@app.post("/extract-form16")
+async def extract_form16_data(request: Form16Request):
+    try:
+        result = extract_form16(request.user_id)
+        
+        if result['status'] == 'error':
+            raise HTTPException(status_code=400, detail=result['message'])
+        
+        return {
+            "message": "Form 16 data extracted successfully",
+            "extracted_pairs_count": result['extracted_pairs_count'],
+            "csv_file": result['csv_file'],
+            "key_value_pairs": result['data']
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
