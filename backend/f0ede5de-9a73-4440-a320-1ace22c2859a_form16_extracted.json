@@ -1,0 +1,537 @@
+[
+  {
+    "Key": "PAN of the",
+    "Value": "",
+    "Confidence": 93.63
+  },
+  {
+    "Key": "Challan Identification Number (CIN)",
+    "Value": "",
+    "Confidence": 97.53
+  },
+  {
+    "Key": "From",
+    "Value": "01-Apr-2021",
+    "Confidence": 91.06
+  },
+  {
+    "Key": "Employee/Specified senior citizen",
+    "Value": "XXXXXXXX",
+    "Confidence": 93.64
+  },
+  {
+    "Key": "PAN of the Deductor",
+    "Value": "xxxxxxxxx",
+    "Confidence": 94.96
+  },
+  {
+    "Key": "To",
+    "Value": "31-Mar-2022",
+    "Confidence": 89.3
+  },
+  {
+    "Key": "TAN of the Deductor",
+    "Value": "xxxxxxxxx",
+    "Confidence": 95.02
+  },
+  {
+    "Key": "Certificate No.",
+    "Value": "xxxxxxx",
+    "Confidence": 94.75
+  },
+  {
+    "Key": "Last updated on",
+    "Value": "01/06/2022",
+    "Confidence": 95.0
+  },
+  {
+    "Key": "Status of matching with Form no. 24G",
+    "Value": "",
+    "Confidence": 91.62
+  },
+  {
+    "Key": "Name and address of the Employer/Specified Bank",
+    "Value": "121 Quality House August Kranti Marg August Kranti, Bengaluru,400036,India +91-999999999 xyz@gmail.com",
+    "Confidence": 95.31
+  },
+  {
+    "Key": "Name and address of the Employee/Specified senior citizen",
+    "Value": "158 Victoria Bakery Bldg. Mody Road Fort, Bengaluru,40001,India",
+    "Confidence": 94.75
+  },
+  {
+    "Key": "Employee Reference No. provided by the Employer/Pension Payment order no. provided by the Employer (If available)",
+    "Value": "",
+    "Confidence": 88.7
+  },
+  {
+    "Key": "Date of transfer voucher (dd/mm/yyyy)",
+    "Value": "",
+    "Confidence": 92.02
+  },
+  {
+    "Key": "Page",
+    "Value": "2",
+    "Confidence": 92.8
+  },
+  {
+    "Key": "Tax Deposited in respect of the deductee (Rs.)",
+    "Value": "",
+    "Confidence": 60.0
+  },
+  {
+    "Key": "Total (Rs.)",
+    "Value": "",
+    "Confidence": 73.31
+  },
+  {
+    "Key": "Assessment Year",
+    "Value": "2022-23",
+    "Confidence": 94.79
+  },
+  {
+    "Key": "Receipt Numbers of Form",
+    "Value": "No. 24G",
+    "Confidence": 89.03
+  },
+  {
+    "Key": "CIT (TDS)",
+    "Value": "Sahkar Apt 64 SV Road Malad, Bengaluru,400054,India",
+    "Confidence": 94.42
+  },
+  {
+    "Key": "DDO serial number in Form no.",
+    "Value": "24G",
+    "Confidence": 94.41
+  },
+  {
+    "Key": "FORM NO.",
+    "Value": "16",
+    "Confidence": 65.25
+  },
+  {
+    "Key": "son",
+    "Value": "",
+    "Confidence": 100.0
+  },
+  {
+    "Key": "Challan Identification Number (CIN)",
+    "Value": "",
+    "Confidence": 93.67
+  },
+  {
+    "Key": "daughter",
+    "Value": "",
+    "Confidence": 64.62
+  },
+  {
+    "Key": "Place",
+    "Value": "Bengaluru",
+    "Confidence": 94.96
+  },
+  {
+    "Key": "Certificate Number:",
+    "Value": "XXXXXXXX",
+    "Confidence": 94.71
+  },
+  {
+    "Key": "Full Name:",
+    "Value": "XXXXXX",
+    "Confidence": 94.81
+  },
+  {
+    "Key": "Designation:",
+    "Value": "AUTHORISED SIGNATORY",
+    "Confidence": 94.98
+  },
+  {
+    "Key": "Date",
+    "Value": "01/06/2022",
+    "Confidence": 94.57
+  },
+  {
+    "Key": "TAN of Employer:",
+    "Value": "33333333",
+    "Confidence": 94.72
+  },
+  {
+    "Key": "Account Year:",
+    "Value": "========",
+    "Confidence": 94.24
+  },
+  {
+    "Key": "PAN of Employee:",
+    "Value": "XXXXXXXX",
+    "Confidence": 94.51
+  },
+  {
+    "Key": "Page",
+    "Value": "2",
+    "Confidence": 89.93
+  },
+  {
+    "Key": "(Signature of person responsible for deduction of Tax)",
+    "Value": "",
+    "Confidence": 89.98
+  },
+  {
+    "Key": "Total (Rs.)",
+    "Value": "483740.00",
+    "Confidence": 94.55
+  },
+  {
+    "Key": "xxyyxxyy",
+    "Value": "",
+    "Confidence": 60.0
+  },
+  {
+    "Key": "PAN of the Employee/Specified senior citizen",
+    "Value": "xxxxxxxx",
+    "Confidence": 95.0
+  },
+  {
+    "Key": "Name and address of the Employer/Specified Bank",
+    "Value": "121 Quality House August Kranti Marg August Kranti, Bengaluru,400036,India +91-999999999 xyz@gmail.com",
+    "Confidence": 95.3
+  },
+  {
+    "Key": "Last updated on",
+    "Value": "06-Jun-2022",
+    "Confidence": 94.0
+  },
+  {
+    "Key": "PAN of the Deductor",
+    "Value": "xxxxxxxx",
+    "Confidence": 95.16
+  },
+  {
+    "Key": "Name and address of the Employee/Specified senior citizen",
+    "Value": "158 Victoria Bakery Bidg. Mody Road Fort, Bengaluru, 400001 India",
+    "Confidence": 94.6
+  },
+  {
+    "Key": "Page",
+    "Value": "1 of 4",
+    "Confidence": 93.93
+  },
+  {
+    "Key": "To",
+    "Value": "31-Mar-2022",
+    "Confidence": 90.1
+  },
+  {
+    "Key": "Certificate No.",
+    "Value": "XXXXXXX",
+    "Confidence": 94.75
+  },
+  {
+    "Key": "TAN of the Deductor",
+    "Value": "xxxxxxxx",
+    "Confidence": 95.26
+  },
+  {
+    "Key": "From",
+    "Value": "01-Apr-2021",
+    "Confidence": 89.75
+  },
+  {
+    "Key": "Whether opting for taxation u/s 115BAC",
+    "Value": "No",
+    "Confidence": 80.0
+  },
+  {
+    "Key": "Assessment Year",
+    "Value": "2022-23",
+    "Confidence": 94.94
+  },
+  {
+    "Key": "Annexure",
+    "Value": "I",
+    "Confidence": 90.59
+  },
+  {
+    "Key": "CIT (TDS)",
+    "Value": "Sahkar Apt 84 s Road Malad, Bengaluru,400064,India",
+    "Confidence": 93.53
+  },
+  {
+    "Key": "(a) Travel concession or assistance under section 10(5)",
+    "Value": "0.00",
+    "Confidence": 47.35
+  },
+  {
+    "Key": "2. Less:",
+    "Value": "Allowances to the extent exempt under section 10",
+    "Confidence": 62.03
+  },
+  {
+    "Key": "(d) Cash equivalent of leave salary encashment under section 10 (10AA)",
+    "Value": "0.00",
+    "Confidence": 49.23
+  },
+  {
+    "Key": "FORM NO.",
+    "Value": "16",
+    "Confidence": 71.14
+  },
+  {
+    "Key": "(a) Salary as per provisions contained in section 17(1)",
+    "Value": "2557983.00",
+    "Confidence": 58.85
+  },
+  {
+    "Key": "(b) Value of perquisites under section 17(2) (as per Form No. 12BA. wherever applicable)",
+    "Value": "0.00",
+    "Confidence": 61.42
+  },
+  {
+    "Key": "(e) House rent allowance under section 10(13A)",
+    "Value": "180150.00",
+    "Confidence": 66.8
+  },
+  {
+    "Key": "(d) Total",
+    "Value": "2557983.00",
+    "Confidence": 75.2
+  },
+  {
+    "Key": "(e) Reported total amount of salary received from other employer(s)",
+    "Value": "0.00",
+    "Confidence": 75.12
+  },
+  {
+    "Key": "Certificate Number:",
+    "Value": "********",
+    "Confidence": 94.9
+  },
+  {
+    "Key": "Page",
+    "Value": "2 of 4",
+    "Confidence": 94.21
+  },
+  {
+    "Key": "TAN of Employer:",
+    "Value": "========",
+    "Confidence": 95.05
+  },
+  {
+    "Key": "Assument Year:",
+    "Value": "<<<<<<<<",
+    "Confidence": 94.91
+  },
+  {
+    "Key": "PAN of Employee:",
+    "Value": "XXXXXXXX",
+    "Confidence": 95.13
+  },
+  {
+    "Key": "(b) Income under the head Other Sources offered for TDS",
+    "Value": "0.00",
+    "Confidence": 70.83
+  },
+  {
+    "Key": "5. Total amount of deductions under section 16 [4(a)+4(b)+4(c)]",
+    "Value": "52400.00",
+    "Confidence": 74.54
+  },
+  {
+    "Key": "Amount of any other exemption under section 10 (f) [Note: Break-up to be filled and signed by employer in the table provide at the bottom of this form]",
+    "Value": "",
+    "Confidence": 55.68
+  },
+  {
+    "Key": "(b) Entertainment allowance under section 16(ii)",
+    "Value": "0.00",
+    "Confidence": 72.83
+  },
+  {
+    "Key": "8. Total amount of other income reported by the employee [7(a)+7(b)]",
+    "Value": "0.00",
+    "Confidence": 75.48
+  },
+  {
+    "Key": "(g) Total amount of any other exemption under section 10",
+    "Value": "0.00",
+    "Confidence": 70.48
+  },
+  {
+    "Key": "(a) Standard deduction under section 16(ia)",
+    "Value": "50000.00",
+    "Confidence": 68.24
+  },
+  {
+    "Key": "(c) Tax on employment under section 16(iii)",
+    "Value": "2400.00",
+    "Confidence": 74.52
+  },
+  {
+    "Key": "Income (or admissible loss) from house property reported by (a) employee offered for TDS",
+    "Value": "0.00",
+    "Confidence": 70.82
+  },
+  {
+    "Key": "9. Gross total income (6+8)",
+    "Value": "2325433.00",
+    "Confidence": 76.28
+  },
+  {
+    "Key": "6. Income chargeable under the head \"Salaries\" [(3+1(e)-5]",
+    "Value": "2325433.00",
+    "Confidence": 75.09
+  },
+  {
+    "Key": "Total amount of exemption claimed under section 10 (h) (2(a)+2(b)+2(c)+2(d)+2(e)+2(g)",
+    "Value": "180150.00",
+    "Confidence": 75.88
+  },
+  {
+    "Key": "3. Total amount of salary received from current employer (1(d)-2(h)]",
+    "Value": "2377833.00",
+    "Confidence": 75.78
+  },
+  {
+    "Key": "Certificate Number:",
+    "Value": "XXXXXXXX",
+    "Confidence": 94.89
+  },
+  {
+    "Key": "Page",
+    "Value": "3 of 4",
+    "Confidence": 93.77
+  },
+  {
+    "Key": "Full Name:",
+    "Value": "",
+    "Confidence": 89.62
+  },
+  {
+    "Key": "TAN of Employer:",
+    "Value": "XXXXXXXX",
+    "Confidence": 94.67
+  },
+  {
+    "Key": "Assument Year:",
+    "Value": "XXXXXXXX",
+    "Confidence": 94.35
+  },
+  {
+    "Key": "PAN of Employee:",
+    "Value": "*******",
+    "Confidence": 94.86
+  },
+  {
+    "Key": "(Signature of person responsible for deduction of tax)",
+    "Value": "xxxxxxxx",
+    "Confidence": 60.0
+  },
+  {
+    "Key": "Deduction in respect of interest on loan taken for higher (h) education under section 80E",
+    "Value": "0.00 0.00",
+    "Confidence": 26.31
+  },
+  {
+    "Key": "Date",
+    "Value": "01/06/2022",
+    "Confidence": 93.76
+  },
+  {
+    "Key": "Place",
+    "Value": "Bengaluru",
+    "Confidence": 93.04
+  },
+  {
+    "Key": "Aggregate of deductible amount under Chapter VI-A 11. [10(d)+10(e)+10(f)+10(g)+10(h)+10(i)+10(j)+10()",
+    "Value": "150000.00",
+    "Confidence": 94.4
+  },
+  {
+    "Key": "12. Total taxable income (9-11)",
+    "Value": "2175433.00",
+    "Confidence": 95.27
+  },
+  {
+    "Key": "16. Health and education cess",
+    "Value": "18605.00",
+    "Confidence": 74.75
+  },
+  {
+    "Key": "18. Less: Relief under section 89 (attach details)",
+    "Value": "0.00",
+    "Confidence": 73.66
+  },
+  {
+    "Key": "19. Net tax payable (17-18)",
+    "Value": "483737.00",
+    "Confidence": 75.91
+  },
+  {
+    "Key": "13. Tax on total income",
+    "Value": "465132.00",
+    "Confidence": 75.86
+  },
+  {
+    "Key": "17. Tax payable (13+15+16-14)",
+    "Value": "483737.00",
+    "Confidence": 75.33
+  },
+  {
+    "Key": "14. Rebate under section 87A. if applicable",
+    "Value": "0.00",
+    "Confidence": 74.63
+  },
+  {
+    "Key": "son/daughter of",
+    "Value": "xxyyxxyy",
+    "Confidence": 55.44
+  },
+  {
+    "Key": "15. Surcharge, wherever applicable",
+    "Value": "0.00",
+    "Confidence": 74.83
+  },
+  {
+    "Key": "Full Name:",
+    "Value": "",
+    "Confidence": 93.76
+  },
+  {
+    "Key": "Certificate Number:",
+    "Value": "xxxxxxx",
+    "Confidence": 95.35
+  },
+  {
+    "Key": "Place",
+    "Value": "Bengaluru",
+    "Confidence": 94.94
+  },
+  {
+    "Key": "Page",
+    "Value": "4 of 4",
+    "Confidence": 80.0
+  },
+  {
+    "Key": "TAN of Employer:",
+    "Value": "========",
+    "Confidence": 95.17
+  },
+  {
+    "Key": "Assument Year:",
+    "Value": "********",
+    "Confidence": 94.79
+  },
+  {
+    "Key": "Date",
+    "Value": "01/06/2022",
+    "Confidence": 95.27
+  },
+  {
+    "Key": "PAN of Employee:",
+    "Value": "********",
+    "Confidence": 95.17
+  },
+  {
+    "Key": "(Signature of person responsible for deduction of tax)",
+    "Value": "xxxxxxx",
+    "Confidence": 60.0
+  }
+]

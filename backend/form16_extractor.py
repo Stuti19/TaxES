@@ -1,5 +1,4 @@
 import boto3
-import pandas as pd
 import os
 from dotenv import load_dotenv
 import json
@@ -64,15 +63,15 @@ class Form16Extractor:
             
             doc.close()
             
-            # Save to CSV
-            csv_filename = f"{user_id}_form16_extracted.csv"
-            df = pd.DataFrame(all_key_value_pairs)
-            df.to_csv(csv_filename, index=False)
+            # Save to JSON
+            json_filename = f"{user_id}_form16_extracted.json"
+            with open(json_filename, 'w') as f:
+                json.dump(all_key_value_pairs, f, indent=2)
             
             return {
                 'status': 'success',
                 'extracted_pairs_count': len(all_key_value_pairs),
-                'csv_file': csv_filename,
+                'json_file': json_filename,
                 'data': all_key_value_pairs
             }
             
