@@ -1,0 +1,22 @@
+{
+  "aadhar_number": {
+    "value": "226816223671",
+    "confidence": 96.71197509765625
+  },
+  "name": {
+    "value": "Anjali",
+    "confidence": 68.9
+  },
+  "date_of_birth": {
+    "value": "18/09/1999",
+    "confidence": 95.25
+  },
+  "gender": {
+    "value": "FEMALE",
+    "confidence": 68.9
+  },
+  "address": {
+    "value": "110093 15 Ashok Nagar Shahdara Mandoli Saboli North East Delhi - 110093",
+    "confidence": 98.83502960205078
+  }
+}
