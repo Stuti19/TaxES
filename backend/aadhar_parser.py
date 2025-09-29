@@ -72,12 +72,10 @@ class AadharParser:
             if pin_match:
                 parsed_result['pin_code'] = pin_match.group()
         
-        # Final address cleanup - ensure proper format
+        # Parse address into components
         if parsed_result.get('address'):
-            addr = parsed_result['address']
-            # Clean up any remaining issues
-            addr = re.sub(r'\s+', ' ', addr).strip()
-            parsed_result['address'] = addr
+            address_components = self._parse_address_components(parsed_result['address'])
+            parsed_result.update(address_components)
         
         return parsed_result
 
@@ -109,6 +107,113 @@ class AadharParser:
         # Extract 6-digit PIN code from address
         pin_match = re.search(r'\b\d{6}\b', value)
         return pin_match.group() if pin_match else ''
+    
+    def _parse_address_components(self, address):
+        """Parse address into specific components"""
+        components = {
+            'flat_door_block_no': '',
+            'building_premises_village': '',
+            'road_street_post_office': '',
+            'area_locality': '',
+            'town_city_district': '',
+            'state': '',
+            'country': 'India'  # Default for Aadhar cards
+        }
+        
+        if not address:
+            return components
+        
+        # Clean address
+        addr = re.sub(r'\s*-\s*\d{6}$', '', address)  # Remove trailing pincode
+        addr = re.sub(r'\s+', ' ', addr).strip()
+        
+        # Split address into parts
+        parts = [part.strip() for part in addr.split() if part.strip()]
+        
+        # Extract flat/door/block number (look for numbers that aren't pincodes)
+        for i, part in enumerate(parts):
+            if re.match(r'^\d+$', part) and len(part) < 6:  # Number but not pincode
+                components['flat_door_block_no'] = part
+                parts = parts[:i] + parts[i+1:]  # Remove this part
+                break
+        
+        # Extract state (common Indian states)
+        states = ['delhi', 'mumbai', 'bangalore', 'chennai', 'kolkata', 'hyderabad', 
+                 'pune', 'ahmedabad', 'surat', 'jaipur', 'lucknow', 'kanpur', 
+                 'nagpur', 'indore', 'thane', 'bhopal', 'visakhapatnam', 'pimpri']
+        
+        state_found = ''
+        for part in parts:
+            if any(state in part.lower() for state in states):
+                if 'delhi' in part.lower():
+                    state_found = 'Delhi'
+                elif 'mumbai' in part.lower():
+                    state_found = 'Maharashtra'
+                elif 'bangalore' in part.lower():
+                    state_found = 'Karnataka'
+                # Add more state mappings as needed
+                break
+        
+        if state_found:
+            components['state'] = state_found
+        
+        # Extract city/district (look for major city names)
+        cities = ['delhi', 'mumbai', 'bangalore', 'chennai', 'kolkata', 'hyderabad']
+        city_found = ''
+        for part in parts:
+            if any(city in part.lower() for city in cities):
+                city_found = part
+                break
+        
+        if city_found:
+            components['town_city_district'] = city_found
+        
+        # Extract area/locality (look for 'nagar', 'colony', etc.)
+        area_keywords = ['nagar', 'colony', 'sector', 'block', 'area', 'locality']
+        area_parts = []
+        for i, part in enumerate(parts):
+            if any(keyword in part.lower() for keyword in area_keywords):
+                # Include the word before and the keyword
+                if i > 0:
+                    area_parts.append(parts[i-1])
+                area_parts.append(part)
+        
+        if area_parts:
+            components['area_locality'] = ' '.join(area_parts)
+        
+        # Extract road/street (look for 'road', 'street', 'marg')
+        road_keywords = ['road', 'street', 'marg', 'lane', 'avenue']
+        road_parts = []
+        for i, part in enumerate(parts):
+            if any(keyword in part.lower() for keyword in road_keywords):
+                if i > 0:
+                    road_parts.append(parts[i-1])
+                road_parts.append(part)
+        
+        if road_parts:
+            components['road_street_post_office'] = ' '.join(road_parts)
+        
+        # Building/premises (remaining significant parts)
+        remaining_parts = []
+        used_parts = set()
+        
+        # Collect already used parts
+        for comp_value in components.values():
+            if comp_value and comp_value != 'India':
+                used_parts.update(comp_value.split())
+        
+        # Find unused parts that could be building names
+        for part in parts:
+            if (part not in used_parts and 
+                len(part) > 2 and 
+                not part.isdigit() and
+                not any(keyword in part.lower() for keyword in ['north', 'south', 'east', 'west'])):
+                remaining_parts.append(part)
+        
+        if remaining_parts:
+            components['building_premises_village'] = ' '.join(remaining_parts[:2])  # Take first 2 parts
+        
+        return components
 
     def _clean_and_validate(self, data):
         # Clean up the parsed data
@@ -159,6 +264,11 @@ class AadharParser:
                 clean_addr = re.sub(r'\s*-\s*\d{6}$', '', clean_addr)  # Remove trailing - pincode
                 clean_addr = re.sub(r'\s+', ' ', clean_addr).strip()
                 cleaned_data[field] = clean_addr
+            
+            # Handle address components
+            elif field in ['flat_door_block_no', 'building_premises_village', 'road_street_post_office', 
+                          'area_locality', 'town_city_district', 'state', 'country']:
+                cleaned_data[field] = value
             
             # Extract pincode from address
             elif field == 'pin_code':
