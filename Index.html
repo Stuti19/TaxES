@@ -148,7 +148,7 @@
                 { key: "panCard", title: "PAN Card" },
                 { key: "aadharCard", title: "Aadhaar Card" },
                 { key: "bankStatement", title: "Bank Statement" },
-                { key: "form16", title: "Form 16" },
+                { key: "form16", title: "Form-16" },
             ];
             const { documents } = React.useContext(AppContext);
             return (
@@ -185,22 +185,42 @@
 
         const StartProcessing = () => {
             const { documents } = React.useContext(AppContext);
+            const [loading, setLoading] = useState(false);
+
             const handleStart = () => {
                 if (Object.keys(documents).length === 0) {
                     alert("Upload all required documents first!");
                     return;
                 }
-                alert("✅ Documents sent to backend for processing!");
+                setLoading(true);
+
+                // simulate backend process 4-8 seconds
+                setTimeout(() => {
+                    window.location.href = "output.html";
+                }, 6000); // 6 sec
             };
+
             return (
                 <div className="text-center mt-12">
-                    <p className="text-gray-600 mb-4">
-                        Once you’ve uploaded all documents, click below to start smart processing.
-                    </p>
-                    <button onClick={handleStart} className="btn-primary px-10 py-4 text-lg font-semibold rounded-xl shadow-lg">
-                        Start Processing
-                        <i data-lucide="arrow-right" className="inline w-5 h-5 ml-2"></i>
-                    </button>
+                    {!loading ? (
+                        <>
+                            <p className="text-gray-600 mb-4">
+                                Once you’ve uploaded all documents, click below to start smart processing.
+                            </p>
+                            <button onClick={handleStart} className="btn-primary px-10 py-4 text-lg font-semibold rounded-xl shadow-lg">
+                                Start Processing
+                                <i data-lucide="arrow-right" className="inline w-5 h-5 ml-2"></i>
+                            </button>
+                        </>
+                    ) : (
+                        <div className="flex flex-col items-center space-y-4">
+                            <svg className="animate-spin h-10 w-10 text-cyan-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            <p className="text-gray-700 font-medium">Processing your documents... Please wait</p>
+                        </div>
+                    )}
                 </div>
             );
         };
@@ -242,10 +262,9 @@
                     <div>
                         <h4 className="font-semibold mb-3">Contact</h4>
                         <p>📞 +91 8349670829</p>
-                        <p>📧 yogeshsahubtl2003@gmail.com</p>
+                        <p>📧 b5majorproject2026@gmail.com</p>
                     </div>
                     <div>
-                        <h4 className="font-semibold mb-3">Follow Us</h4>
                         <div className="flex space-x-4">
                             <a href="#" className="footer-link">LinkedIn</a>
                             <a href="#" className="footer-link">Instagram</a>
