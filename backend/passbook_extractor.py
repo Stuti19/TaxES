@@ -3,10 +3,10 @@ import os
 from dotenv import load_dotenv
 import json
 import fitz  # PyMuPDF
-import csv
+import re
 
 # Load environment variables
-load_dotenv()
+load_dotenv('passbook.env')
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -30,7 +30,6 @@ class PassbookExtractor:
         )
 
     def extract_passbook_data(self, user_id):
-        # Use the real file path as per your S3
         document_key = f"{user_id}/sample-passbook.pdf"
 
         try:
@@ -38,9 +37,10 @@ class PassbookExtractor:
             response = self.s3.get_object(Bucket=S3_BUCKET_NAME, Key=document_key)
             pdf_bytes = response['Body'].read()
 
-            # Convert PDF to images using PyMuPDF
+            # Convert PDF to images
             doc = fitz.open(stream=pdf_bytes, filetype="pdf")
             all_key_value_pairs = []
+            full_text = ""  # Store all text for IFSC regex search
 
             for page_num in range(len(doc)):
                 page = doc.load_page(page_num)
@@ -58,38 +58,41 @@ class PassbookExtractor:
                         key_text = self._get_text_from_block(block, response['Blocks'])
                         value_block = self._find_value_block(block, response['Blocks'])
                         value_text = self._get_text_from_block(value_block, response['Blocks']) if value_block else ""
-                        confidence = block.get('Confidence', 0)
 
                         if key_text.strip():
                             all_key_value_pairs.append({
                                 'Key': key_text.strip(),
-                                'Value': value_text.strip(),
-                                'Confidence': round(confidence, 2)
+                                'Value': value_text.strip()
                             })
+                            full_text += " " + key_text + " " + value_text
+                    elif block['BlockType'] == 'LINE':
+                        # Add all lines to full_text to search for IFSC
+                        full_text += " " + block.get('Text', '')
 
             doc.close()
 
-            # Save JSON
+            # Use regex to find IFSC if missing
+            ifsc_match = re.search(r'\b[A-Z]{4}0[A-Z0-9]{6}\b', full_text)
+            if ifsc_match:
+                ifsc_code = ifsc_match.group(0)
+                if not any("IFSC" in kv['Key'].upper() for kv in all_key_value_pairs):
+                    all_key_value_pairs.append({
+                        'Key': 'IFSC',
+                        'Value': ifsc_code
+                    })
+
+            # Save JSON only
             json_file = f"{user_id}_passbook_extracted.json"
             with open(json_file, "w") as f:
                 json.dump(all_key_value_pairs, f, indent=2)
 
-            # Save CSV (optional: transactions only)
-            csv_file = f"{user_id}_passbook_extracted.csv"
-            with open(csv_file, "w", newline="") as f:
-                writer = csv.DictWriter(f, fieldnames=["Key", "Value", "Confidence"])
-                writer.writeheader()
-                writer.writerows(all_key_value_pairs)
-
-            # Upload JSON & CSV back to S3 out folder
+            # Upload JSON back to S3
             self.s3.upload_file(json_file, S3_BUCKET_NAME, f"out/{user_id}/{json_file}")
-            self.s3.upload_file(csv_file, S3_BUCKET_NAME, f"out/{user_id}/{csv_file}")
 
             return {
                 "status": "success",
                 "extracted_pairs_count": len(all_key_value_pairs),
                 "json_file": json_file,
-                "csv_file": csv_file,
                 "data": all_key_value_pairs
             }
 
