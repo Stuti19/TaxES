@@ -1,11 +1,11 @@
 import json
-import csv
 import os
 from dotenv import load_dotenv
 import boto3
+import re
 
 # Load environment variables
-load_dotenv()
+load_dotenv('passbook.env')
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -22,94 +22,61 @@ class PassbookParser:
             region_name=AWS_REGION
         )
 
-    def parse_json_to_csv(self, user_id, json_file=None):
+    def parse_json(self, user_id, json_file=None):
+        """
+        Load JSON extracted data, check for missing IFSC, and update JSON.
+        """
         if not json_file:
             json_file = f"{user_id}_passbook_extracted.json"
+
+        # Download JSON from S3 if it exists
+        try:
+            self.s3.download_file(S3_BUCKET_NAME, f"out/{user_id}/{json_file}", json_file)
+        except Exception:
+            pass  # If not on S3, use local file
 
         # Load JSON data
-        with open(json_file, "r") as f:
-            data = json.load(f)
+        try:
+            with open(json_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except FileNotFoundError:
+            return {"status": "error", "message": "JSON file not found."}
 
-        if not data:
-            return {"status": "error", "message": "No data found in JSON file."}
+        # Concatenate all text to search for missing IFSC
+        full_text = " ".join(item.get("Key", "") + " " + item.get("Value", "") for item in data)
 
-        # Create CSV file
-        csv_file = f"{user_id}_passbook_parsed.csv"
-        with open(csv_file, "w", newline="") as f:
-            fieldnames = ["Key", "Value", "Confidence"]
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            for item in data:
-                writer.writerow({
-                    "Key": item.get("Key", ""),
-                    "Value": item.get("Value", ""),
-                    "Confidence": item.get("Confidence", 0)
+        # Check for IFSC using regex if missing
+        if not any("IFSC" in item.get("Key", "").upper() for item in data):
+            ifsc_match = re.search(r'\b[A-Z]{4}0[A-Z0-9]{6}\b', full_text)
+            if ifsc_match:
+                data.append({
+                    "Key": "IFSC",
+                    "Value": ifsc_match.group(0)
                 })
 
-        # Upload CSV back to S3
-        self.s3.upload_file(csv_file, S3_BUCKET_NAME, f"out/{user_id}/{csv_file}")
-
-        return {"status": "success", "json_file": json_file, "csv_file": csv_file}
-
-    def parse_json_to_structured_csv(self, user_id, json_file=None):
-        """
-        Optional: structure CSV into columns for easier analysis
-        Example columns: Date, Description, Debit, Credit, Balance
-        """
-        if not json_file:
-            json_file = f"{user_id}_passbook_extracted.json"
-
-        with open(json_file, "r") as f:
-            data = json.load(f)
-
-        # Example heuristic: find transactions by key-value patterns
-        transactions = []
+        # Update any empty IFSC keys
         for item in data:
-            key = item.get("Key", "").lower()
-            value = item.get("Value", "")
-            if any(k in key for k in ["date", "txn date"]):
-                txn = {"Date": value, "Description": "", "Debit": "", "Credit": "", "Balance": ""}
-                transactions.append(txn)
-            elif transactions:
-                # Append other fields based on order
-                txn = transactions[-1]
-                if "description" in key:
-                    txn["Description"] = value
-                elif "debit" in key:
-                    txn["Debit"] = value
-                elif "credit" in key:
-                    txn["Credit"] = value
-                elif "balance" in key:
-                    txn["Balance"] = value
+            if "IFSC" in item.get("Key", "").upper() and not item.get("Value"):
+                item["Value"] = "Not found"
 
-        structured_csv = f"{user_id}_passbook_structured.csv"
-        if transactions:
-            with open(structured_csv, "w", newline="") as f:
-                writer = csv.DictWriter(f, fieldnames=["Date", "Description", "Debit", "Credit", "Balance"])
-                writer.writeheader()
-                for txn in transactions:
-                    writer.writerow(txn)
+        # Save updated JSON
+        updated_json_file = f"{user_id}_passbook_parsed.json"
+        with open(updated_json_file, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
 
-            # Upload structured CSV to S3
-            self.s3.upload_file(structured_csv, S3_BUCKET_NAME, f"out/{user_id}/{structured_csv}")
+        # Upload updated JSON to S3
+        self.s3.upload_file(updated_json_file, S3_BUCKET_NAME, f"out/{user_id}/{updated_json_file}")
 
-            return {
-                "status": "success",
-                "structured_csv": structured_csv,
-                "transaction_count": len(transactions)
-            }
-
-        return {"status": "error", "message": "No transactions found in JSON."}
+        return {
+            "status": "success",
+            "json_file": updated_json_file,
+            "data": data
+        }
 
 
 def parse_passbook(user_id, json_file=None):
     parser = PassbookParser()
-    result_basic = parser.parse_json_to_csv(user_id, json_file)
-    result_structured = parser.parse_json_to_structured_csv(user_id, json_file)
-    return {
-        "basic_csv": result_basic,
-        "structured_csv": result_structured
-    }
+    return parser.parse_json(user_id, json_file)
 
 
 if __name__ == "__main__":
