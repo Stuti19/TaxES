@@ -1,135 +1,132 @@
-import os
-import io
-import csv
-import json
-import time
-import logging
-import urllib.parse
-from typing import List, Dict, Optional, Tuple
-
 import boto3
-from backend.passbook_parser import (
-    extract_key_values,
-    extract_table_cells,
-    build_passbook_summary,
-)
+import os
+from dotenv import load_dotenv
+import json
+import fitz  # PyMuPDF
+import re
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+# Load environment variables
+load_dotenv('passbook.env')
 
-s3 = boto3.client("s3")
-textract = boto3.client("textract")
-
-
-def lambda_handler(event, context):
-    """AWS Lambda entry point for passbook processing"""
-    logger.info("Event: %s", json.dumps(event))
-
-    records = event.get("Records", [])
-    if not records:
-        return {"statusCode": 400, "body": "No S3 records found"}
-
-    results = []
-    for r in records:
-        bucket = r["s3"]["bucket"]["name"]
-        key = urllib.parse.unquote_plus(r["s3"]["object"]["key"])
-        logger.info(f"Processing file: s3://{bucket}/{key}")
-        result = process_document(bucket, key)
-        results.append(result)
-
-    return {"statusCode": 200, "body": json.dumps(results)}
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.getenv("AWS_REGION")
+S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
 
 
-# --------------------------- Core processing ---------------------------
+class PassbookExtractor:
+    def __init__(self):
+        self.textract = boto3.client(
+            "textract",
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+            region_name=AWS_REGION
+        )
+        self.s3 = boto3.client(
+            "s3",
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+            region_name=AWS_REGION
+        )
 
-def process_document(bucket: str, key: str) -> dict:
-    base = os.path.splitext(os.path.basename(key))[0]
-    out_dir = f"out/passbook/{base}/"
+    def extract_passbook_data(self, user_id):
+        document_key = f"{user_id}/sample-passbook.pdf"
 
-    # 1) Start Textract analysis
-    job_id = textract.start_document_analysis(
-        DocumentLocation={"S3Object": {"Bucket": bucket, "Name": key}},
-        FeatureTypes=["FORMS", "TABLES"],
-    )["JobId"]
+        try:
+            # Download PDF from S3
+            response = self.s3.get_object(Bucket=S3_BUCKET_NAME, Key=document_key)
+            pdf_bytes = response['Body'].read()
 
-    # 2) Collect results
-    blocks, meta = collect_results(job_id)
+            # Convert PDF to images
+            doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+            all_key_value_pairs = []
+            full_text = ""  # Store all text for IFSC regex search
 
-    # 3) Parse FORMS and TABLES using parser
-    kv_pairs = extract_key_values(blocks)
-    table_cells = extract_table_cells(blocks)
-    summary = build_passbook_summary(blocks, kv_pairs)
+            for page_num in range(len(doc)):
+                page = doc.load_page(page_num)
+                pix = page.get_pixmap()
+                img_data = pix.tobytes("png")
 
-    # 4) Save outputs to S3
-    put_csv(bucket, f"{out_dir}key_values.csv", ["Key", "Value", "Confidence"], kv_pairs)
-    put_csv(bucket, f"{out_dir}transactions.csv",
-            ["Page", "Table", "Row", "Column", "Text", "Confidence"], table_cells)
-    put_json(bucket, f"{out_dir}summary.json", summary)
+                # Textract analyze_document
+                response = self.textract.analyze_document(
+                    Document={'Bytes': img_data},
+                    FeatureTypes=['FORMS']
+                )
 
-    return {
-        "pages": meta.get("Pages"),
-        "kv_pairs": len(kv_pairs),
-        "table_cells": len(table_cells),
-        "summary_s3": f"s3://{bucket}/{out_dir}summary.json",
-    }
+                for block in response['Blocks']:
+                    if block['BlockType'] == 'KEY_VALUE_SET' and 'KEY' in block.get('EntityTypes', []):
+                        key_text = self._get_text_from_block(block, response['Blocks'])
+                        value_block = self._find_value_block(block, response['Blocks'])
+                        value_text = self._get_text_from_block(value_block, response['Blocks']) if value_block else ""
+
+                        if key_text.strip():
+                            all_key_value_pairs.append({
+                                'Key': key_text.strip(),
+                                'Value': value_text.strip()
+                            })
+                            full_text += " " + key_text + " " + value_text
+                    elif block['BlockType'] == 'LINE':
+                        # Add all lines to full_text to search for IFSC
+                        full_text += " " + block.get('Text', '')
+
+            doc.close()
+
+            # Use regex to find IFSC if missing
+            ifsc_match = re.search(r'\b[A-Z]{4}0[A-Z0-9]{6}\b', full_text)
+            if ifsc_match:
+                ifsc_code = ifsc_match.group(0)
+                if not any("IFSC" in kv['Key'].upper() for kv in all_key_value_pairs):
+                    all_key_value_pairs.append({
+                        'Key': 'IFSC',
+                        'Value': ifsc_code
+                    })
+
+            # Save JSON only
+            json_file = f"{user_id}_passbook_extracted.json"
+            with open(json_file, "w") as f:
+                json.dump(all_key_value_pairs, f, indent=2)
+
+            # Upload JSON back to S3
+            self.s3.upload_file(json_file, S3_BUCKET_NAME, f"out/{user_id}/{json_file}")
+
+            return {
+                "status": "success",
+                "extracted_pairs_count": len(all_key_value_pairs),
+                "json_file": json_file,
+                "data": all_key_value_pairs
+            }
+
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+    def _get_text_from_block(self, block, all_blocks):
+        if not block or 'Relationships' not in block:
+            return ""
+        text = ""
+        for rel in block['Relationships']:
+            if rel['Type'] == 'CHILD':
+                for child_id in rel['Ids']:
+                    child_block = next((b for b in all_blocks if b['Id'] == child_id), None)
+                    if child_block and child_block['BlockType'] == 'WORD':
+                        text += child_block['Text'] + " "
+        return text.strip()
+
+    def _find_value_block(self, key_block, all_blocks):
+        if 'Relationships' not in key_block:
+            return None
+        for rel in key_block['Relationships']:
+            if rel['Type'] == 'VALUE':
+                value_id = rel['Ids'][0]
+                return next((b for b in all_blocks if b['Id'] == value_id), None)
+        return None
 
 
-def collect_results(job_id: str, max_wait_seconds: int = 480) -> Tuple[List[dict], dict]:
-    """Poll Textract GetDocumentAnalysis until all pages are returned."""
-    blocks: List[dict] = []
-    meta: dict = {}
-    next_token = None
-    start = time.time()
-    backoff = 1.2
-
-    while True:
-        if time.time() - start > max_wait_seconds:
-            raise TimeoutError(f"Textract job {job_id} timed out")
-
-        kwargs = {"JobId": job_id, "MaxResults": 1000}
-        if next_token:
-            kwargs["NextToken"] = next_token
-
-        resp = textract.get_document_analysis(**kwargs)
-        status = resp.get("JobStatus")
-        blocks.extend(resp.get("Blocks", []))
-        meta = resp.get("DocumentMetadata", meta)
-        next_token = resp.get("NextToken")
-
-        if not next_token and status in ("SUCCEEDED", "PARTIAL_SUCCESS"):
-            break
-        if status == "FAILED":
-            raise RuntimeError(f"Textract job failed: {job_id}")
-
-        time.sleep(backoff)
-        backoff = min(backoff * 1.5, 8.0)
-
-    return blocks, meta
+def extract_passbook(user_id):
+    extractor = PassbookExtractor()
+    return extractor.extract_passbook_data(user_id)
 
 
-# --------------------------- S3 helpers ---------------------------
-
-def put_csv(bucket: str, key: str, headers: List[str], rows: List[List[object]]):
-    buf = io.StringIO()
-    writer = csv.writer(buf)
-    writer.writerow(headers)
-    for r in rows:
-        writer.writerow(r)
-    s3.put_object(
-        Bucket=bucket,
-        Key=key,
-        Body=buf.getvalue().encode("utf-8"),
-        ContentType="text/csv",
-    )
-    logger.info(f"Wrote s3://{bucket}/{key}")
-
-
-def put_json(bucket: str, key: str, obj: dict):
-    data = json.dumps(obj, ensure_ascii=False, indent=2).encode("utf-8")
-    s3.put_object(
-        Bucket=bucket,
-        Key=key,
-        Body=data,
-        ContentType="application/json",
-    )
-    logger.info(f"Wrote s3://{bucket}/{key}")
+if __name__ == "__main__":
+    user_id = input("Enter user ID: ")
+    result = extract_passbook(user_id)
+    print(json.dumps(result, indent=2))

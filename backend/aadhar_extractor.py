@@ -160,7 +160,13 @@ class AadharExtractor:
                     }
             
             # Map Name - look for actual person name
-            if ('anjali' in value.lower() and len(value.split()) <= 3):
+            if (len(value.split()) >= 1 and len(value.split()) <= 4 and 
+                not value.replace(' ', '').replace('-', '').isdigit() and
+                not any(addr_keyword in value.lower() for addr_keyword in ['nagar', 'delhi', 'road', 'colony', 'sector', 'block', 'street', 'pin', 'north', 'east', 'west', 'south']) and
+                not any(doc_keyword in value.upper() for doc_keyword in ['AADHAAR', 'AADHAR', 'GOVERNMENT', 'INDIA', 'UNIQUE', 'IDENTIFICATION', 'AUTHORITY']) and
+                '/' not in value and len(value) > 2 and len(value) < 50 and
+                not value.upper() in ['MALE', 'FEMALE'] and
+                not re.search(r'\d{6}', value)):
                 # Extract just the name part, remove D/O, S/O etc
                 name_part = re.sub(r'\b(D/O|S/O|W/O)\b.*', '', value, flags=re.IGNORECASE).strip()
                 if name_part and confidence > aadhar_data['name']['confidence']:
@@ -214,7 +220,15 @@ class AadharExtractor:
             
             # Find name if not found
             if not aadhar_data['name']['value']:
-                if 'anjali' in text.lower():
+                # Look for potential names (1-4 words, not numbers, not addresses)
+                if (len(text.split()) >= 1 and len(text.split()) <= 4 and 
+                    not text.replace(' ', '').replace('-', '').isdigit() and
+                    not any(addr_keyword in text.lower() for addr_keyword in ['nagar', 'delhi', 'road', 'colony', 'sector', 'block', 'street', 'pin', 'north', 'east', 'west', 'south']) and
+                    not any(doc_keyword in text.upper() for doc_keyword in ['AADHAAR', 'AADHAR', 'GOVERNMENT', 'INDIA', 'UNIQUE', 'IDENTIFICATION', 'AUTHORITY']) and
+                    '/' not in text and len(text) > 2 and len(text) < 50 and
+                    not text.upper() in ['MALE', 'FEMALE'] and
+                    not re.search(r'\d{6}', text) and
+                    not re.search(r'\d{12}', text)):
                     # Extract just the name part, remove D/O, S/O etc
                     name_part = re.sub(r'\b(D/O|S/O|W/O)\b.*', '', text, flags=re.IGNORECASE).strip()
                     name_part = re.sub(r'\b(JOH|PR|DOB)\b.*', '', name_part, flags=re.IGNORECASE).strip()

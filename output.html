@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TaxES</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #e0f7fa, #fffde7);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #0ea5e9, #10b981, #fbbf24);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.1);
+            transition: transform 0.3s ease;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+            color: #10b981;
+            transition: all 0.3s ease;
+        }
+
+        .slider-arrow:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: scale(1.1);
+            transition: all 0.3s ease;
+        }
+
+        h2,
+        h3,
+        h4 {
+            transition: all 0.3s ease;
+        }
+
+        h2:hover,
+        h3:hover,
+        h4:hover {
+            color: #0ea5e9;
+        }
+
+        .slider-image:hover {
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+
+        .pdf-preview {
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-gray-800">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useEffect, useState } = React;
+
+        const Navbar = () => (
+            <nav className="bg-gradient-to-r from-cyan-400 via-green-300 to-yellow-200 shadow-md sticky top-0 z-50">
+                <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-3 cursor-pointer hover:scale-105 transition-transform nav-logo">
+                        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow">
+                            <i data-lucide="calculator" className="w-6 h-6 text-cyan-500"></i>
+                        </div>
+                        <h1 className="text-2xl font-bold text-gray-800">TaxES</h1>
+                    </div>
+                    <span className="text-gray-800 font-medium hidden md:block">
+                        Simple • Secure • Smart Tax Filing
+                    </span>
+                </div>
+            </nav>
+        );
+
+        const StartProcessing = () => {
+            const pdfUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+            const [showPreview, setShowPreview] = useState(false);
+
+            const handleStart = () => {
+                const link = document.createElement("a");
+                link.href = pdfUrl;
+                link.download = "TaxES_Document.pdf";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setShowPreview(true);
+            };
+
+            return (
+                <div className="flex flex-col items-center mt-12">
+                    <h2 className="text-3xl font-bold mb-2 text-center">Download ITR Extract PDF</h2>
+                    <p className="text-center max-w-xl mb-6 text-gray-700">
+                        Easily download your Income Tax Return extraction document. Preview it instantly below after downloading for your convenience.
+                    </p>
+                    <button
+                        onClick={handleStart}
+                        className="btn-primary px-10 py-4 text-lg font-semibold rounded-xl shadow-lg flex items-center space-x-3"
+                    >
+                        <span>Download PDF</span>
+                        <i
+                            className="fa fa-file-pdf-o"
+                            style={{ fontSize: "24px", color: "red", marginLeft: "10px" }}
+                            aria-hidden="true"
+                        ></i>
+                    </button>
+
+                    {showPreview && (
+                        <iframe
+                            src={pdfUrl}
+                            title="PDF Preview"
+                            className="pdf-preview"
+                            frameBorder="0"
+                        ></iframe>
+                    )}
+                </div>
+            );
+        };
+
+        const ImageSlider = ({ images, links }) => {
+            const [currentIndex, setCurrentIndex] = useState(0);
+
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setCurrentIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
+                }, 5000);
+                return () => clearInterval(interval);
+            }, [images.length]);
+
+            const prevSlide = () => setCurrentIndex(prev => (prev === 0 ? images.length - 1 : prev - 1));
+            const nextSlide = () => setCurrentIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
+
+            return (
+                <div className="relative w-full max-w-4xl mx-auto mb-12 mt-12">
+                    <div className="overflow-hidden rounded-xl shadow-lg">
+                        <a href={links[currentIndex]} target="_blank" rel="noopener noreferrer">
+                            <img
+                                src={images[currentIndex]}
+                                alt={`slide-${currentIndex}`}
+                                className="w-full h-64 object-cover slider-image"
+                            />
+                        </a>
+                    </div>
+                    <button
+                        onClick={prevSlide}
+                        className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-2 shadow slider-arrow"
+                    >
+                        <i data-lucide="chevron-left" className="w-6 h-6"></i>
+                    </button>
+                    <button
+                        onClick={nextSlide}
+                        className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-2 shadow slider-arrow"
+                    >
+                        <i data-lucide="chevron-right" className="w-6 h-6"></i>
+                    </button>
+                </div>
+            );
+        };
+
+        const Footer = () => (
+            <footer className="bg-gradient-to-r from-cyan-400 via-green-300 to-yellow-200 text-gray-800 mt-16">
+                <div className="container mx-auto px-6 py-12 grid md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 className="text-xl font-bold mb-3">TaxES</h3>
+                        <p className="text-sm">Smart ITR filing with AI-powered document extraction. Faster, easier, and secure.</p>
+                    </div>
+                    <div>
+                        <h4 className="font-semibold mb-3">Contact</h4>
+                        <p>📞 +91 8349670829</p>
+                        <p>📧 b5majorproject2026@gmail.com</p>
+                    </div>
+                    <div>
+                        <h4 className="font-semibold mb-3">Follow Us</h4>
+                        <div className="flex space-x-4">
+                            <a href="#" className="footer-link">LinkedIn</a>
+                            <a href="#" className="footer-link">Instagram</a>
+                            <a href="#" className="footer-link">Twitter</a>
+                            <a href="#" className="footer-link">Facebook</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 className="font-semibold mb-3">About</h4>
+                        <p className="text-sm">Upload PAN, Aadhaar, Form-16 and bank statements. TaxES fills details automatically to save your time and effort.</p>
+                    </div>
+                </div>
+                <div className="border-t border-white/30 py-4 text-center text-sm">
+                    © {new Date().getFullYear()} TaxES. All rights reserved.
+                </div>
+            </footer>
+        );
+
+        const App = () => {
+            useEffect(() => {
+                lucide.createIcons();
+            }, []);
+
+            const sliderImages = [
+                "https://img-cdn.publive.online/fit-in/640x430/filters:format(webp)/financial-express-hindi/media/media_files/2025/09/02/itr-filing-ai-image-by-gemini-2025-09-02-13-08-00.jpg",
+                "https://ebizfiling.com/wp-content/uploads/2022/02/itr-filing.png",
+                "https://img.indiafilings.com/guides/feature_image/income-tax-itr-filing-due-date.jpg",
+            ];
+            const sliderLinks = [
+                "https://www.indiafilings.com/learn/file-income-tax-return/",
+                "https://www.cnbctv18.com/personal-finance/income-tax-return-itr-filing-deadline-jan-15-penalties-interest-extra-payment-19539635.htm",
+                "https://hindi.financialexpress.com/investment-saving-news/itr-filing-2025-making-wrong-claims-or-hiding-income-in-itr-may-cost-you-heavy-penalties-9777706",
+            ];
+
+            return (
+                <div>
+                    <Navbar />
+                    <main className="container mx-auto px-6 py-8 max-w-7xl">
+                        <StartProcessing />
+                        <ImageSlider images={sliderImages} links={sliderLinks} />
+                    </main>
+                    <Footer />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
