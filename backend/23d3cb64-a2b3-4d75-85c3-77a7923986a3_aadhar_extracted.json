@@ -1,0 +1,47 @@
+[
+  {
+    "Key": "\u044d\u0442\u0430\u043d TT",
+    "Value": "\u0417\u041f\u042f 3112",
+    "Confidence": 95.63
+  },
+  {
+    "Key": "Gender:Male",
+    "Value": "",
+    "Confidence": 90.69
+  },
+  {
+    "Key": "DOB:",
+    "Value": "26-06-2004",
+    "Confidence": 94.94
+  },
+  {
+    "Key": "-",
+    "Value": "",
+    "Confidence": 67.98
+  },
+  {
+    "Key": "Address:",
+    "Value": "S/o Sujit Vichale, 226, 2nd Floor, Samikaran Building, Sant Janabai Marg, Hanuman Mandir, Vileparle East, Mumbai, Maharashtra, 400057",
+    "Confidence": 94.26
+  },
+  {
+    "Key": "P.O. Box No.",
+    "Value": "1947,",
+    "Confidence": 69.01
+  },
+  {
+    "Key": "1947",
+    "Value": "1800 300 1947",
+    "Confidence": 56.1
+  },
+  {
+    "Key": "www",
+    "Value": "www.uidal.gov.in",
+    "Confidence": 74.98
+  },
+  {
+    "Key": "Bengaluru-560",
+    "Value": "001",
+    "Confidence": 58.34
+  }
+]

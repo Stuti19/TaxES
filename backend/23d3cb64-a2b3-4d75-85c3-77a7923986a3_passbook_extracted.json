@@ -1,0 +1,997 @@
+[
+  {
+    "Key": "1",
+    "Value": "",
+    "Confidence": 100.0
+  },
+  {
+    "Key": "5",
+    "Value": "",
+    "Confidence": 100.0
+  },
+  {
+    "Key": "8",
+    "Value": "",
+    "Confidence": 100.0
+  },
+  {
+    "Key": "interest",
+    "Value": "",
+    "Confidence": 100.0
+  },
+  {
+    "Key": "22",
+    "Value": "",
+    "Confidence": 100.0
+  },
+  {
+    "Key": "24",
+    "Value": "",
+    "Confidence": 100.0
+  },
+  {
+    "Key": "25",
+    "Value": "",
+    "Confidence": 100.0
+  },
+  {
+    "Key": "26",
+    "Value": "",
+    "Confidence": 100.0
+  },
+  {
+    "Key": "OBC",
+    "Value": "",
+    "Confidence": 84.84
+  },
+  {
+    "Key": "3",
+    "Value": "Call Collection",
+    "Confidence": 89.01
+  },
+  {
+    "Key": "4",
+    "Value": "Common Commission",
+    "Confidence": 93.03
+  },
+  {
+    "Key": "RTN Return",
+    "Value": "",
+    "Confidence": 80.35
+  },
+  {
+    "Key": "Tran Transaction",
+    "Value": "",
+    "Confidence": 85.05
+  },
+  {
+    "Key": "2",
+    "Value": "2 Chaque",
+    "Confidence": 78.95
+  },
+  {
+    "Key": "DW",
+    "Value": "Dividend",
+    "Confidence": 71.92
+  },
+  {
+    "Key": "Inf. Transfer",
+    "Value": "",
+    "Confidence": 75.52
+  },
+  {
+    "Key": "51",
+    "Value": "",
+    "Confidence": 84.03
+  },
+  {
+    "Key": "9 ELS",
+    "Value": "Electrons Dearing insure",
+    "Confidence": 72.4
+  },
+  {
+    "Key": "LCP",
+    "Value": "Civique",
+    "Confidence": 69.44
+  },
+  {
+    "Key": "7 Dr",
+    "Value": "Debt",
+    "Confidence": 91.85
+  },
+  {
+    "Key": "10 Brook",
+    "Value": "Standing Instruction",
+    "Confidence": 90.78
+  },
+  {
+    "Key": "Customer ID :",
+    "Value": "129047382",
+    "Confidence": 94.65
+  },
+  {
+    "Key": "Address",
+    "Value": "C/O SURESH SASHRAYA L/0 HOODI 2ND STAGE 3RD CROSS BANGALORE-560048, INDIA",
+    "Confidence": 94.35
+  },
+  {
+    "Key": "Operational Instruction :",
+    "Value": "SINGLE",
+    "Confidence": 94.97
+  },
+  {
+    "Key": "Date of Opening :",
+    "Value": "21-07-2017",
+    "Confidence": 94.56
+  },
+  {
+    "Key": "Br:",
+    "Value": "",
+    "Confidence": 93.6
+  },
+  {
+    "Key": "Nomination registered on :",
+    "Value": "16-09-2017",
+    "Confidence": 93.92
+  },
+  {
+    "Key": "Phone:",
+    "Value": "08025401110,",
+    "Confidence": 95.0
+  },
+  {
+    "Key": "Name :",
+    "Value": "MR DEKKA BENARJI RAJU",
+    "Confidence": 94.32
+  },
+  {
+    "Key": "Toll Free number:",
+    "Value": "1800 425 1199",
+    "Confidence": 93.89
+  },
+  {
+    "Key": "Communication address last updated on :",
+    "Value": "16-09-2017",
+    "Confidence": 94.01
+  },
+  {
+    "Key": "MICR Code:",
+    "Value": "560049007",
+    "Confidence": 95.25
+  },
+  {
+    "Key": "Account Type :",
+    "Value": "Savings Account",
+    "Confidence": 94.51
+  },
+  {
+    "Key": "Account activation date :",
+    "Value": "16-09-2017",
+    "Confidence": 90.54
+  },
+  {
+    "Key": "IFSC :",
+    "Value": "FDRL0001454",
+    "Confidence": 95.05
+  },
+  {
+    "Key": "Account Number :",
+    "Value": "14540100089134",
+    "Confidence": 94.45
+  },
+  {
+    "Key": "Regd. Office:",
+    "Value": "Aluva, Kerala, India THE FEDERAL BANK LTD BANGALORE / MARATHAHALLI",
+    "Confidence": 60.0
+  },
+  {
+    "Key": "AWB",
+    "Value": "Any",
+    "Confidence": 30.34
+  },
+  {
+    "Key": "POS Sur",
+    "Value": "23",
+    "Confidence": 28.74
+  },
+  {
+    "Key": "(For Pre-opened kits)",
+    "Value": "",
+    "Confidence": 80.0
+  },
+  {
+    "Key": "KARNATAKA -",
+    "Value": "560037",
+    "Confidence": 45.56
+  },
+  {
+    "Key": "No Abbreviation",
+    "Value": "",
+    "Confidence": 48.75
+  },
+  {
+    "Key": "Header Text",
+    "Value": "ABBREWATIONS",
+    "Confidence": 40.30373001098633
+  },
+  {
+    "Key": "Header Text",
+    "Value": "51 No",
+    "Confidence": 60.748714447021484
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Abbreviation",
+    "Confidence": 26.867624282836914
+  },
+  {
+    "Key": "Header Text",
+    "Value": "FEDERAL BANK",
+    "Confidence": 99.96054077148438
+  },
+  {
+    "Key": "Header Text",
+    "Value": "1",
+    "Confidence": 95.29336547851562
+  },
+  {
+    "Key": "Header Text",
+    "Value": "AWB",
+    "Confidence": 88.41936492919922
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Any",
+    "Confidence": 86.26155853271484
+  },
+  {
+    "Key": "Header Text",
+    "Value": "2",
+    "Confidence": 96.9581069946289
+  },
+  {
+    "Key": "Header Text",
+    "Value": "2",
+    "Confidence": 42.835418701171875
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Chaque",
+    "Confidence": 46.005062103271484
+  },
+  {
+    "Key": "Header Text",
+    "Value": "YOUR PERFECT BANKING PARTNER",
+    "Confidence": 99.94853210449219
+  },
+  {
+    "Key": "Header Text",
+    "Value": "3",
+    "Confidence": 93.4875259399414
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Call",
+    "Confidence": 30.950454711914062
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Collection",
+    "Confidence": 19.606584548950195
+  },
+  {
+    "Key": "Header Text",
+    "Value": "4",
+    "Confidence": 97.84538269042969
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Common",
+    "Confidence": 56.976444244384766
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Commission",
+    "Confidence": 35.130340576171875
+  },
+  {
+    "Key": "Header Text",
+    "Value": "5",
+    "Confidence": 99.12208557128906
+  },
+  {
+    "Key": "Header Text",
+    "Value": "8",
+    "Confidence": 38.8438720703125
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Code",
+    "Confidence": 31.060070037841797
+  },
+  {
+    "Key": "Header Text",
+    "Value": "6",
+    "Confidence": 94.29149627685547
+  },
+  {
+    "Key": "Header Text",
+    "Value": "00",
+    "Confidence": 63.246768951416016
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Demand Drall",
+    "Confidence": 24.05950927734375
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Regd. Office: Aluva, Kerala, India",
+    "Confidence": 96.90362548828125
+  },
+  {
+    "Key": "Header Text",
+    "Value": "7",
+    "Confidence": 91.06346130371094
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Dr",
+    "Confidence": 86.99298858642578
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Debt",
+    "Confidence": 49.699256896972656
+  },
+  {
+    "Key": "Header Text",
+    "Value": "THE FEDERAL BANK LTD",
+    "Confidence": 99.96318054199219
+  },
+  {
+    "Key": "Header Text",
+    "Value": "8",
+    "Confidence": 94.56892395019531
+  },
+  {
+    "Key": "Header Text",
+    "Value": "DW",
+    "Confidence": 97.3778305053711
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Dividend",
+    "Confidence": 43.83051681518555
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Br: BANGALORE / MARATHAHALLI",
+    "Confidence": 99.45581817626953
+  },
+  {
+    "Key": "Header Text",
+    "Value": "9",
+    "Confidence": 98.71511840820312
+  },
+  {
+    "Key": "Header Text",
+    "Value": "ELS",
+    "Confidence": 93.04627990722656
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Electrons Dearing insure",
+    "Confidence": 43.52887725830078
+  },
+  {
+    "Key": "Header Text",
+    "Value": "10",
+    "Confidence": 98.49669647216797
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Brook",
+    "Confidence": 29.35845947265625
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Standing Instruction",
+    "Confidence": 49.62113571166992
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Br.:",
+    "Confidence": 93.04448699951172
+  },
+  {
+    "Key": "Header Text",
+    "Value": "NO-43 VARTHUR MAIN ROAD, MARATHAHALLI",
+    "Confidence": 98.53491973876953
+  },
+  {
+    "Key": "Header Text",
+    "Value": "11",
+    "Confidence": 99.79332733154297
+  },
+  {
+    "Key": "Header Text",
+    "Value": "(FCCP",
+    "Confidence": 50.9185676574707
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Foreign Currency Cheque Purchased",
+    "Confidence": 95.54074096679688
+  },
+  {
+    "Key": "Header Text",
+    "Value": "12",
+    "Confidence": 99.56314086914062
+  },
+  {
+    "Key": "Header Text",
+    "Value": "EL",
+    "Confidence": 50.470943450927734
+  },
+  {
+    "Key": "Header Text",
+    "Value": "mail Bills for Collection",
+    "Confidence": 65.77918243408203
+  },
+  {
+    "Key": "Header Text",
+    "Value": "BANGALORE",
+    "Confidence": 99.814453125
+  },
+  {
+    "Key": "Header Text",
+    "Value": "13",
+    "Confidence": 98.1004867553711
+  },
+  {
+    "Key": "Header Text",
+    "Value": "BP",
+    "Confidence": 71.5403823852539
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Inward Bills under 10",
+    "Confidence": 67.53372955322266
+  },
+  {
+    "Key": "Header Text",
+    "Value": "BANGALORE",
+    "Confidence": 99.921875
+  },
+  {
+    "Key": "Header Text",
+    "Value": "14",
+    "Confidence": 99.35486602783203
+  },
+  {
+    "Key": "Header Text",
+    "Value": "CBP",
+    "Confidence": 98.53794860839844
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Inland Clean bills Purchased",
+    "Confidence": 68.93106079101562
+  },
+  {
+    "Key": "Header Text",
+    "Value": "KARNATAKA - 560037",
+    "Confidence": 95.76065826416016
+  },
+  {
+    "Key": "Header Text",
+    "Value": "15",
+    "Confidence": 99.87145233154297
+  },
+  {
+    "Key": "Header Text",
+    "Value": "OBP",
+    "Confidence": 49.95236587524414
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Inland Documentary Bills Purchased",
+    "Confidence": 84.46951293945312
+  },
+  {
+    "Key": "Header Text",
+    "Value": "16",
+    "Confidence": 99.52327728271484
+  },
+  {
+    "Key": "Header Text",
+    "Value": "inst,",
+    "Confidence": 50.433876037597656
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Instrument",
+    "Confidence": 60.15485382080078
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Phone: 08025401110, 25400111",
+    "Confidence": 95.3069839477539
+  },
+  {
+    "Key": "Header Text",
+    "Value": "17",
+    "Confidence": 99.32796478271484
+  },
+  {
+    "Key": "Header Text",
+    "Value": "2",
+    "Confidence": 24.881616592407227
+  },
+  {
+    "Key": "Header Text",
+    "Value": "interest",
+    "Confidence": 77.47908020019531
+  },
+  {
+    "Key": "Header Text",
+    "Value": "MICR Code: 560049007",
+    "Confidence": 99.9373550415039
+  },
+  {
+    "Key": "Header Text",
+    "Value": "18",
+    "Confidence": 99.69567108154297
+  },
+  {
+    "Key": "Header Text",
+    "Value": "0",
+    "Confidence": 80.99888610839844
+  },
+  {
+    "Key": "Header Text",
+    "Value": "interest Outliow",
+    "Confidence": 59.29727554321289
+  },
+  {
+    "Key": "Header Text",
+    "Value": "19",
+    "Confidence": 99.23529052734375
+  },
+  {
+    "Key": "Header Text",
+    "Value": "LCC",
+    "Confidence": 80.322265625
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Local Cheque for Collection",
+    "Confidence": 96.76378631591797
+  },
+  {
+    "Key": "Header Text",
+    "Value": "IFSC",
+    "Confidence": 99.93083953857422
+  },
+  {
+    "Key": "Header Text",
+    "Value": ": FDRL0001454",
+    "Confidence": 98.12350463867188
+  },
+  {
+    "Key": "Header Text",
+    "Value": "20",
+    "Confidence": 99.39552307128906
+  },
+  {
+    "Key": "Header Text",
+    "Value": "LCP",
+    "Confidence": 89.23529052734375
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Local Civique Purchased",
+    "Confidence": 82.7265396118164
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Toll Free number: 1800 425 1199",
+    "Confidence": 98.91392517089844
+  },
+  {
+    "Key": "Header Text",
+    "Value": "21",
+    "Confidence": 99.65501403808594
+  },
+  {
+    "Key": "Header Text",
+    "Value": "OBC",
+    "Confidence": 72.8294448852539
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Outward Bills for Collection",
+    "Confidence": 93.89573669433594
+  },
+  {
+    "Key": "Header Text",
+    "Value": "22",
+    "Confidence": 99.77300262451172
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Pd",
+    "Confidence": 71.34486389160156
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Paid",
+    "Confidence": 99.28571319580078
+  },
+  {
+    "Key": "Header Text",
+    "Value": "23",
+    "Confidence": 99.80309295654297
+  },
+  {
+    "Key": "Header Text",
+    "Value": "POS Sur",
+    "Confidence": 96.86005401611328
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Point of Sale Surcharge",
+    "Confidence": 93.73251342773438
+  },
+  {
+    "Key": "Header Text",
+    "Value": "24",
+    "Confidence": 99.61674499511719
+  },
+  {
+    "Key": "Header Text",
+    "Value": "RTN",
+    "Confidence": 98.60869598388672
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Return",
+    "Confidence": 99.48819732666016
+  },
+  {
+    "Key": "Header Text",
+    "Value": "25",
+    "Confidence": 99.44595336914062
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Tran",
+    "Confidence": 74.30823516845703
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Transaction",
+    "Confidence": 99.64764404296875
+  },
+  {
+    "Key": "Header Text",
+    "Value": "EXERCISE YOUR NOMINATION FACILITY",
+    "Confidence": 99.94345092773438
+  },
+  {
+    "Key": "Header Text",
+    "Value": "26",
+    "Confidence": 73.64696502685547
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Inf.",
+    "Confidence": 25.828882217407227
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Transfer",
+    "Confidence": 99.44176483154297
+  },
+  {
+    "Key": "Header Text",
+    "Value": "B5138",
+    "Confidence": 60.43785858154297
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Account Type",
+    "Confidence": 99.97518920898438
+  },
+  {
+    "Key": "Header Text",
+    "Value": ": Savings Account",
+    "Confidence": 98.60869598388672
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Account Number",
+    "Confidence": 99.98007202148438
+  },
+  {
+    "Key": "Header Text",
+    "Value": ": 14540100089134",
+    "Confidence": 98.65154266357422
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Customer ID",
+    "Confidence": 99.83119201660156
+  },
+  {
+    "Key": "Header Text",
+    "Value": ": 129047382",
+    "Confidence": 97.73397827148438
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Name",
+    "Confidence": 99.970703125
+  },
+  {
+    "Key": "Header Text",
+    "Value": ":",
+    "Confidence": 95.654296875
+  },
+  {
+    "Key": "Header Text",
+    "Value": "MR DEKKA BENARJI RAJU",
+    "Confidence": 99.89646911621094
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Address",
+    "Confidence": 99.92107391357422
+  },
+  {
+    "Key": "Header Text",
+    "Value": ":",
+    "Confidence": 86.7724609375
+  },
+  {
+    "Key": "Header Text",
+    "Value": "C/O SURESH SASHRAYA L/0 HOODI",
+    "Confidence": 91.63771057128906
+  },
+  {
+    "Key": "Header Text",
+    "Value": "2ND STAGE 3RD CROSS",
+    "Confidence": 99.99267578125
+  },
+  {
+    "Key": "Header Text",
+    "Value": "BANGALORE-560048, INDIA",
+    "Confidence": 95.1355209350586
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Communication address last updated on : 16-09-2017",
+    "Confidence": 99.25582122802734
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Operational Instruction : SINGLE",
+    "Confidence": 98.97321319580078
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Date of Opening",
+    "Confidence": 99.90726470947266
+  },
+  {
+    "Key": "Header Text",
+    "Value": ": 21-07-2017",
+    "Confidence": 98.42245483398438
+  },
+  {
+    "Key": "Header Text",
+    "Value": "THE",
+    "Confidence": 82.150634765625
+  },
+  {
+    "Key": "Header Text",
+    "Value": "*",
+    "Confidence": 92.09801483154297
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Account activation date : 16-09-2017",
+    "Confidence": 99.44124603271484
+  },
+  {
+    "Key": "Header Text",
+    "Value": "(For Pre-opened kits)",
+    "Confidence": 99.5264663696289
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Nomination registered on : 16-09-2017",
+    "Confidence": 98.2049560546875
+  },
+  {
+    "Key": "Header Text",
+    "Value": "BANGAL",
+    "Confidence": 96.64640808105469
+  },
+  {
+    "Key": "Header Text",
+    "Value": "CRE",
+    "Confidence": 84.95954132080078
+  },
+  {
+    "Key": "Header Text",
+    "Value": "MALLO",
+    "Confidence": 16.646007537841797
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Res",
+    "Confidence": 88.30197143554688
+  },
+  {
+    "Key": "Header Text",
+    "Value": "C",
+    "Confidence": 54.69497299194336
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Aminor",
+    "Confidence": 19.691286087036133
+  },
+  {
+    "Key": "Header Text",
+    "Value": "Scanned with CamScanne",
+    "Confidence": 86.97731018066406
+  },
+  {
+    "Key": "Header Text",
+    "Value": "For details please contact any of our branches or visitan",
+    "Confidence": 81.85541534423828
+  },
+  {
+    "Key": "Header Text",
+    "Value": "can",
+    "Confidence": 44.87563705444336
+  },
+  {
+    "Key": "51 No",
+    "Value": "Abbreviation",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "1",
+    "Value": "AWB",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "2",
+    "Value": "2",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "3",
+    "Value": "Call",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "4",
+    "Value": "Common",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "5",
+    "Value": "8",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "6",
+    "Value": "00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "7",
+    "Value": "Dr",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "8",
+    "Value": "DW",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "9",
+    "Value": "ELS",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "10",
+    "Value": "Brook",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "11",
+    "Value": "(FCCP",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "12",
+    "Value": "EL",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "13",
+    "Value": "BP",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "14",
+    "Value": "CBP",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "15",
+    "Value": "OBP",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "16",
+    "Value": "inst,",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "17",
+    "Value": "2",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "18",
+    "Value": "0",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "19",
+    "Value": "LCC",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "20",
+    "Value": "LCP",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "21",
+    "Value": "OBC",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "22",
+    "Value": "Pd",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "23",
+    "Value": "POS Sur",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "24",
+    "Value": "RTN",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "25",
+    "Value": "Tran",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "26",
+    "Value": "Inf.",
+    "Confidence": 85.0
+  }
+]

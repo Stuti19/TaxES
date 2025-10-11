@@ -40,13 +40,13 @@ class Form16Extractor:
                 pix = page.get_pixmap()
                 img_data = pix.tobytes("png")
                 
-                # Use Textract on the image
+                # Use Textract on the image with both FORMS and TABLES
                 response = self.textract.analyze_document(
                     Document={'Bytes': img_data},
-                    FeatureTypes=['FORMS']
+                    FeatureTypes=['FORMS', 'TABLES']
                 )
                 
-                # Extract key-value pairs
+                # Extract key-value pairs from FORMS
                 for block in response['Blocks']:
                     if block['BlockType'] == 'KEY_VALUE_SET' and 'KEY' in block.get('EntityTypes', []):
                         key_text = self._get_text_from_block(block, response['Blocks'])
@@ -60,6 +60,10 @@ class Form16Extractor:
                                 'Value': value_text.strip(),
                                 'Confidence': round(confidence, 2)
                             })
+                
+                # Extract additional key-value pairs from table cells
+                table_kvp = self._extract_kvp_from_tables(response['Blocks'])
+                all_key_value_pairs.extend(table_kvp)
             
             doc.close()
             
@@ -100,6 +104,66 @@ class Form16Extractor:
                 value_id = relationship['Ids'][0]
                 return next((b for b in all_blocks if b['Id'] == value_id), None)
         return None
+    
+    def _extract_kvp_from_tables(self, blocks):
+        kvp_pairs = []
+        table_blocks = [block for block in blocks if block['BlockType'] == 'TABLE']
+        
+        for table_block in table_blocks:
+            table_data = []
+            if 'Relationships' in table_block:
+                for relationship in table_block['Relationships']:
+                    if relationship['Type'] == 'CHILD':
+                        for cell_id in relationship['Ids']:
+                            cell_block = next((b for b in blocks if b['Id'] == cell_id), None)
+                            if cell_block and cell_block['BlockType'] == 'CELL':
+                                row_index = cell_block.get('RowIndex', 1) - 1
+                                col_index = cell_block.get('ColumnIndex', 1) - 1
+                                cell_text = self._get_text_from_block(cell_block, blocks)
+                                
+                                while len(table_data) <= row_index:
+                                    table_data.append([])
+                                while len(table_data[row_index]) <= col_index:
+                                    table_data[row_index].append('')
+                                
+                                table_data[row_index][col_index] = cell_text.strip()
+            
+            # Extract key-value pairs from table rows
+            for row in table_data:
+                if len(row) >= 2 and row[0] and row[1]:
+                    key = str(row[0]).strip()
+                    value = str(row[1]).strip()
+                    
+                    # Skip headers and non-meaningful pairs
+                    if (key and value and 
+                        not key.lower() in ['details', 'description', 'rs.', 'amount', 'gross amount', 'deductible amount'] and
+                        not value.lower() in ['rs.', 'amount', 'description']):
+                        
+                        kvp_pairs.append({
+                            'Key': key,
+                            'Value': value,
+                            'Confidence': 85.0
+                        })
+                        
+                # Handle 3+ column tables (key, description, amount)
+                if len(row) >= 3 and row[0] and row[2]:
+                    key = str(row[0]).strip()
+                    description = str(row[1]).strip() if row[1] else ''
+                    value = str(row[2]).strip()
+                    
+                    if (key and value and description and
+                        not key.lower() in ['details', 'rs.', 'amount', 'gross amount'] and
+                        not value.lower() in ['rs.', 'amount', 'description'] and
+                        '10(' in description or '16(' in description or '80' in description):
+                        
+                        combined_key = f"{key} {description}".strip()
+                        kvp_pairs.append({
+                            'Key': combined_key,
+                            'Value': value,
+                            'Confidence': 85.0
+                        })
+        
+        return kvp_pairs
 
 def extract_form16(user_id):
     extractor = Form16Extractor()

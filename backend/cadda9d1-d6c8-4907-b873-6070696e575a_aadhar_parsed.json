@@ -1,6 +1,6 @@
 {
   "aadhar_number": "226816223671",
-  "name": "ANJALI",
+  "name": "- -",
   "date_of_birth": "18/09/1999",
   "gender": "FEMALE",
   "address": "110093 15 Ashok Nagar Shahdara Mandoli Saboli North East Delhi",
@@ -8,5 +8,12 @@
   "mobile": "",
   "email": "",
   "vid": "",
-  "pin_code": "110093"
+  "pin_code": "110093",
+  "flat_door_block_no": "15",
+  "building_premises_village": "Shahdara Mandoli",
+  "road_street_post_office": "",
+  "area_locality": "Ashok Nagar",
+  "town_city_district": "Delhi",
+  "state": "Delhi",
+  "country": "India"
 }

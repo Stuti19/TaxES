@@ -110,6 +110,81 @@
     "Confidence": 49.55
   },
   {
+    "Key": "PAN of the Deductor",
+    "Value": "TAN of the Deductor",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "CIT (TDS)",
+    "Value": "Assessment Year",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Sahkar Apt 84 S V Road Malad, Bengaluru.400064.India",
+    "Value": "2022-23",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Quarter(s)",
+    "Value": "Receipt Numbers of original quarterly statements of IDS under sub-section (3) of Section 200",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Q1",
+    "Value": "XXXXXXXXX",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Q2",
+    "Value": "XXXXXXXXX",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Q3",
+    "Value": "XXXXXXXXX",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Q4",
+    "Value": "XXXXXXXXX",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "1.",
+    "Value": "DETAILS OF TAX DEDUCTED AND The deductor to",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "SI. No.",
+    "Value": "Tax Deposited in respect of the deductee (Rs.)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "SI. No.",
+    "Value": "deductee (Rs.)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "-",
+    "Value": "20912.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "ou",
+    "Value": "20912.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "$0",
+    "Value": "116622.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "-",
+    "Value": "33164.00",
+    "Confidence": 85.0
+  },
+  {
     "Key": "Challan Identification Number (CIN)",
     "Value": "",
     "Confidence": 98.67
@@ -208,6 +283,76 @@
     "Key": "Officer",
     "Value": "(PAO)",
     "Confidence": 54.95
+  },
+  {
+    "Key": "SI. No.",
+    "Value": "deductee (Rs.)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "5",
+    "Value": "33086.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "6",
+    "Value": "32997.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "7",
+    "Value": "32893.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "8",
+    "Value": "32769.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "9",
+    "Value": "39389.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "10",
+    "Value": "13862.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "11",
+    "Value": "38862.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "12",
+    "Value": "38272.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Total (Rs.)",
+    "Value": "483740.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "U",
+    "Value": "Unmatched",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "P",
+    "Value": "Prov isional",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "1",
+    "Value": "Fina.",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "O",
+    "Value": "Overhooked",
+    "Confidence": 85.0
   },
   {
     "Key": "PAN of the Employee/Specitied senior citizen",
@@ -310,6 +455,106 @@
     "Confidence": 73.77
   },
   {
+    "Key": "PAN of the Deductor",
+    "Value": "TAN of the Deductor",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "CIT (TDS)",
+    "Value": "Assessment Year",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Sahkar Apt 84 S V Road Malad. Bengaluru,400064.India",
+    "Value": "2022-23",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Whether",
+    "Value": "opting for taxation u/s 115BAC",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "1.",
+    "Value": "Gross Salary",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(a)",
+    "Value": "Salary as per provisions contained in section 17(1)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(b)",
+    "Value": "Value of perquisites under section 17(2) (as per Form No. 12BA, wherever applicable)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(c)",
+    "Value": "Profits in lieu of salary under section 17(3) (as per Form No. 12BA, wherever applicable)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(d)",
+    "Value": "Total",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(e)",
+    "Value": "Reported total amount of salary received from other employer(s)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "2.",
+    "Value": "Less: Allowances to the extent exempt under section 10",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(a)",
+    "Value": "Travel concession or assistance under section 10(5)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(a) Travel concession or assistance under section 10(5)",
+    "Value": "0.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(b)",
+    "Value": "Death-cum-retirement gratuity under section 10(10)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(b) Death-cum-retirement gratuity under section 10(10)",
+    "Value": "0.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(c)",
+    "Value": "Commuted value of pension under section 10(10A)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(c) Commuted value of pension under section 10(10A)",
+    "Value": "0.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(d)",
+    "Value": "Cash equivalent of leave salary encashment under section 10 (10AA)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(e)",
+    "Value": "House rent allowance under section 10(13A)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(e) House rent allowance under section 10(13A)",
+    "Value": "180150.00",
+    "Confidence": 85.0
+  },
+  {
     "Key": "Page",
     "Value": "2 of 4",
     "Confidence": 93.38
@@ -393,6 +638,151 @@
     "Key": "Total amount of salary received from current employer 3. [1(d)-2(h)]",
     "Value": "2377833.00",
     "Confidence": 62.74
+  },
+  {
+    "Key": "(f)",
+    "Value": "Amount of any other exemption under section 10 [Note: Break-up to be filled and signed by employer in the table provide at the bottom of this form]",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(g)",
+    "Value": "Total amount of any other exemption under section 10",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(h)",
+    "Value": "Total amount of exemption claimed under section 10 [2(a)-2(b)-2(c)-2(d)-2(e)+2(g)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "3.",
+    "Value": "Total amount of salary received from current employer [1(d)-2(h)]",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "4.",
+    "Value": "Less: Deductions under section 16",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(a)",
+    "Value": "Standard deduction under section 16(ia)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(a) Standard deduction under section 16(ia)",
+    "Value": "50000.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(b)",
+    "Value": "Entertainment allowance under section 16(ii)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(b) Entertainment allowance under section 16(ii)",
+    "Value": "0.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(c)",
+    "Value": "Tax on employment under section 16(iii)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(c) Tax on employment under section 16(iii)",
+    "Value": "2400.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "3.",
+    "Value": "Total amount of deductions under section 16 |4(a)+4(b)+4(c)]",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "6.",
+    "Value": "Income chargeable under the head \"Salaries\" [(3-1(e)-5]",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "7.",
+    "Value": "Add: Any other income reported by the employee under as per section",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(a)",
+    "Value": "Income (or admissible loss) from house property reported by employee offered for TDS",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(b)",
+    "Value": "Income under the head Other Sources offered for TDS",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "8.",
+    "Value": "Total amount of other income reported by the employee [7(a)-7(b)]",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "9.",
+    "Value": "Gross total income (6+8)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "10.",
+    "Value": "Deductions under Chapter VI-A",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(a)",
+    "Value": "Deduction in respect of life insurance premia, contributions to provident fund etc. under section 80C",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(a) Deduction in respect of life insurance premia, contributions to provident fund etc. under section 80C",
+    "Value": "150000.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(b)",
+    "Value": "Deduction in respect of contribution to certain pension funds under section 80CCC",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(b) Deduction in respect of contribution to certain pension funds under section 80CCC",
+    "Value": "0.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(c)",
+    "Value": "Deduction in respect of contribution by taxpayer to pension scheme under section 80CCD (1)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(c) Deduction in respect of contribution by taxpayer to pension scheme under section 80CCD (1)",
+    "Value": "0.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(d)",
+    "Value": "Total deduction under section 80C, 80CCC and 80CCD(1)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(d) Total deduction under section 80C, 80CCC and 80CCD(1)",
+    "Value": "150000.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(e)",
+    "Value": "Deductions in respect of amount paid/deposited to notified pension scheme under section 80CCD (1B)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(e) Deductions in respect of amount paid/deposited to notified pension scheme under section 80CCD (1B)",
+    "Value": "0.00",
+    "Confidence": 85.0
   },
   {
     "Key": "Assessment Year:",
@@ -495,6 +885,121 @@
     "Confidence": 48.24
   },
   {
+    "Key": "(f)",
+    "Value": "Deduction in respect of contribution by Employer to pension scheme under section 80CCD (2)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(f) Deduction in respect of contribution by Employer to pension scheme under section 80CCD (2)",
+    "Value": "0.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(g)",
+    "Value": "Deduction in respect of health insurance premia under section 80D",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(g) Deduction in respect of health insurance premia under section 80D",
+    "Value": "0.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(h)",
+    "Value": "Deduction in respect of interest on loan taken for higher education under section 80E",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(h) Deduction in respect of interest on loan taken for higher education under section 80E",
+    "Value": "0.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(i)",
+    "Value": "Total Deduction in respect of donations to certain funds, charitable institutions, etc. under section 80G",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(i) Total Deduction in respect of donations to certain funds, charitable institutions, etc. under section 80G",
+    "Value": "0.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(j)",
+    "Value": "Deduction in respect of interest on deposits in savings account under section 80TTA",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(j) Deduction in respect of interest on deposits in savings account under section 80TTA",
+    "Value": "0.00",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(k)",
+    "Value": "Amount Deductible under any other provision (s) of Chapter VI-A [Note: Break-up to be filled and signed by employer in the table provide at the bottom of this form]",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "(1)",
+    "Value": "Total of amount deductible under any other provision(s) of Chapter VI-A",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "11.",
+    "Value": "Aggregate of deductible amount under Chapter VI-A [10(d)+10(e)+10(f)-10(g)+10(h)+10(i)-10(j)-10()]",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "12.",
+    "Value": "Total taxable income (9-11)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "13.",
+    "Value": "Tax on total income",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "14.",
+    "Value": "Rebate under section 87A, if applicable",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "15.",
+    "Value": "Surcharge, wherever applicable",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "16.",
+    "Value": "Health and education cess",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "17.",
+    "Value": "Tax payable (13+15-16-14)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "18.",
+    "Value": "Less: Relief under section 89 (attach details)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "19.",
+    "Value": "Net tax payable (17-18)",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Place",
+    "Value": "Bengaluru",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Date",
+    "Value": "01/06/2022",
+    "Confidence": 85.0
+  },
+  {
     "Key": "G. Place",
     "Value": "Bengaluru",
     "Confidence": 98.39
@@ -538,5 +1043,35 @@
     "Key": "Assessment Year:",
     "Value": "XXXXXXXX",
     "Confidence": 59.23
+  },
+  {
+    "Key": "2. (f)",
+    "Value": "Break up for 'Amount of any other exemption",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "SI. No.",
+    "Value": "Particular's of Amount for any other exemption under section 10 Rs.",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "10(k).",
+    "Value": "Break up for Amount deductible under any",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "S1. No.",
+    "Value": "Particular's of Amount deductible under any other provision(s) of Chapter VIA Rs.",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Place",
+    "Value": "Bengaluru",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "Date",
+    "Value": "01/06/2022",
+    "Confidence": 85.0
   }
 ]

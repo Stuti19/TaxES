@@ -3,109 +3,108 @@ import os
 from dotenv import load_dotenv
 import json
 import fitz  # PyMuPDF
-import re
 
-# Load environment variables
-load_dotenv('passbook.env')
-
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = os.getenv("AWS_REGION")
-S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
-
+load_dotenv()
 
 class PassbookExtractor:
     def __init__(self):
         self.textract = boto3.client(
-            "textract",
-            aws_access_key_id=AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-            region_name=AWS_REGION
+            'textract',
+            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+            region_name=os.getenv('AWS_REGION')
         )
         self.s3 = boto3.client(
-            "s3",
-            aws_access_key_id=AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-            region_name=AWS_REGION
+            's3',
+            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+            region_name=os.getenv('AWS_REGION')
         )
+        self.bucket_name = os.getenv('S3_BUCKET_NAME')
 
     def extract_passbook_data(self, user_id):
-        document_key = f"{user_id}/sample-passbook.pdf"
-
+        document_key = f"{user_id}/passbook.pdf"
+        
         try:
             # Download PDF from S3
-            response = self.s3.get_object(Bucket=S3_BUCKET_NAME, Key=document_key)
+            response = self.s3.get_object(Bucket=self.bucket_name, Key=document_key)
             pdf_bytes = response['Body'].read()
-
-            # Convert PDF to images
+            
+            # Convert PDF to images using PyMuPDF
             doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+            
             all_key_value_pairs = []
-            full_text = ""  # Store all text for IFSC regex search
-
+            
             for page_num in range(len(doc)):
                 page = doc.load_page(page_num)
                 pix = page.get_pixmap()
                 img_data = pix.tobytes("png")
-
-                # Textract analyze_document
+                
+                # Use Textract on the image with both FORMS and TABLES
                 response = self.textract.analyze_document(
                     Document={'Bytes': img_data},
-                    FeatureTypes=['FORMS']
+                    FeatureTypes=['FORMS', 'TABLES']
                 )
-
+                
+                # Extract all text blocks first (for bank name at top)
+                text_blocks = []
+                for block in response['Blocks']:
+                    if block['BlockType'] == 'LINE':
+                        text = block.get('Text', '').strip()
+                        if text:
+                            text_blocks.append({
+                                'Key': 'Header Text',
+                                'Value': text,
+                                'Confidence': block.get('Confidence', 90)
+                            })
+                
+                # Extract key-value pairs from FORMS
                 for block in response['Blocks']:
                     if block['BlockType'] == 'KEY_VALUE_SET' and 'KEY' in block.get('EntityTypes', []):
                         key_text = self._get_text_from_block(block, response['Blocks'])
                         value_block = self._find_value_block(block, response['Blocks'])
                         value_text = self._get_text_from_block(value_block, response['Blocks']) if value_block else ""
-
+                        confidence = block.get('Confidence', 0)
+                        
                         if key_text.strip():
                             all_key_value_pairs.append({
                                 'Key': key_text.strip(),
-                                'Value': value_text.strip()
+                                'Value': value_text.strip(),
+                                'Confidence': round(confidence, 2)
                             })
-                            full_text += " " + key_text + " " + value_text
-                    elif block['BlockType'] == 'LINE':
-                        # Add all lines to full_text to search for IFSC
-                        full_text += " " + block.get('Text', '')
-
+                
+                # Add text blocks (including bank name)
+                all_key_value_pairs.extend(text_blocks)
+                
+                # Extract additional key-value pairs from table cells
+                table_kvp = self._extract_kvp_from_tables(response['Blocks'])
+                all_key_value_pairs.extend(table_kvp)
+            
             doc.close()
-
-            # Use regex to find IFSC if missing
-            ifsc_match = re.search(r'\b[A-Z]{4}0[A-Z0-9]{6}\b', full_text)
-            if ifsc_match:
-                ifsc_code = ifsc_match.group(0)
-                if not any("IFSC" in kv['Key'].upper() for kv in all_key_value_pairs):
-                    all_key_value_pairs.append({
-                        'Key': 'IFSC',
-                        'Value': ifsc_code
-                    })
-
-            # Save JSON only
-            json_file = f"{user_id}_passbook_extracted.json"
-            with open(json_file, "w") as f:
+            
+            # Save to JSON
+            json_filename = f"{user_id}_passbook_extracted.json"
+            with open(json_filename, 'w') as f:
                 json.dump(all_key_value_pairs, f, indent=2)
-
-            # Upload JSON back to S3
-            self.s3.upload_file(json_file, S3_BUCKET_NAME, f"out/{user_id}/{json_file}")
-
+            
             return {
-                "status": "success",
-                "extracted_pairs_count": len(all_key_value_pairs),
-                "json_file": json_file,
-                "data": all_key_value_pairs
+                'status': 'success',
+                'extracted_pairs_count': len(all_key_value_pairs),
+                'json_file': json_filename,
+                'data': all_key_value_pairs
             }
-
+            
         except Exception as e:
-            return {"status": "error", "message": str(e)}
+            return {'status': 'error', 'message': str(e)}
 
     def _get_text_from_block(self, block, all_blocks):
         if not block or 'Relationships' not in block:
             return ""
+        
         text = ""
-        for rel in block['Relationships']:
-            if rel['Type'] == 'CHILD':
-                for child_id in rel['Ids']:
+        for relationship in block['Relationships']:
+            if relationship['Type'] == 'CHILD':
+                for child_id in relationship['Ids']:
                     child_block = next((b for b in all_blocks if b['Id'] == child_id), None)
                     if child_block and child_block['BlockType'] == 'WORD':
                         text += child_block['Text'] + " "
@@ -114,17 +113,82 @@ class PassbookExtractor:
     def _find_value_block(self, key_block, all_blocks):
         if 'Relationships' not in key_block:
             return None
-        for rel in key_block['Relationships']:
-            if rel['Type'] == 'VALUE':
-                value_id = rel['Ids'][0]
+        
+        for relationship in key_block['Relationships']:
+            if relationship['Type'] == 'VALUE':
+                value_id = relationship['Ids'][0]
                 return next((b for b in all_blocks if b['Id'] == value_id), None)
         return None
-
+    
+    def _extract_kvp_from_tables(self, blocks):
+        kvp_pairs = []
+        table_blocks = [block for block in blocks if block['BlockType'] == 'TABLE']
+        
+        for table_block in table_blocks:
+            table_data = []
+            if 'Relationships' in table_block:
+                for relationship in table_block['Relationships']:
+                    if relationship['Type'] == 'CHILD':
+                        for cell_id in relationship['Ids']:
+                            cell_block = next((b for b in blocks if b['Id'] == cell_id), None)
+                            if cell_block and cell_block['BlockType'] == 'CELL':
+                                row_index = cell_block.get('RowIndex', 1) - 1
+                                col_index = cell_block.get('ColumnIndex', 1) - 1
+                                cell_text = self._get_text_from_block(cell_block, blocks)
+                                
+                                while len(table_data) <= row_index:
+                                    table_data.append([])
+                                while len(table_data[row_index]) <= col_index:
+                                    table_data[row_index].append('')
+                                
+                                table_data[row_index][col_index] = cell_text.strip()
+            
+            # Extract key-value pairs from table rows
+            for row in table_data:
+                if len(row) >= 2 and row[0] and row[1]:
+                    key = str(row[0]).strip()
+                    value = str(row[1]).strip()
+                    
+                    # Skip headers and non-meaningful pairs for Passbook
+                    if (key and value and 
+                        not key.lower() in ['date', 'description', 'debit', 'credit', 'balance', 'particulars'] and
+                        not value.lower() in ['date', 'description', 'debit', 'credit', 'balance']):
+                        
+                        kvp_pairs.append({
+                            'Key': key,
+                            'Value': value,
+                            'Confidence': 85.0
+                        })
+                
+                # Handle transaction tables (date, description, debit, credit, balance)
+                if len(row) >= 5 and row[0] and row[1]:
+                    date = str(row[0]).strip()
+                    description = str(row[1]).strip()
+                    debit = str(row[2]).strip() if row[2] else ''
+                    credit = str(row[3]).strip() if row[3] else ''
+                    balance = str(row[4]).strip() if row[4] else ''
+                    
+                    if date and description and (debit or credit):
+                        transaction_key = f"Transaction {date}"
+                        transaction_value = f"Description: {description}"
+                        if debit:
+                            transaction_value += f", Debit: {debit}"
+                        if credit:
+                            transaction_value += f", Credit: {credit}"
+                        if balance:
+                            transaction_value += f", Balance: {balance}"
+                        
+                        kvp_pairs.append({
+                            'Key': transaction_key,
+                            'Value': transaction_value,
+                            'Confidence': 85.0
+                        })
+        
+        return kvp_pairs
 
 def extract_passbook(user_id):
     extractor = PassbookExtractor()
     return extractor.extract_passbook_data(user_id)
-
 
 if __name__ == "__main__":
     user_id = input("Enter user ID: ")

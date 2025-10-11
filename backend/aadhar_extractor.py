@@ -3,7 +3,6 @@ import os
 from dotenv import load_dotenv
 import json
 import fitz  # PyMuPDF
-import re
 
 load_dotenv()
 
@@ -41,13 +40,13 @@ class AadharExtractor:
                 pix = page.get_pixmap()
                 img_data = pix.tobytes("png")
                 
-                # Use Textract on the image
+                # Use Textract on the image with both FORMS and TABLES
                 response = self.textract.analyze_document(
                     Document={'Bytes': img_data},
-                    FeatureTypes=['FORMS']
+                    FeatureTypes=['FORMS', 'TABLES']
                 )
                 
-                # Extract key-value pairs
+                # Extract key-value pairs from FORMS
                 for block in response['Blocks']:
                     if block['BlockType'] == 'KEY_VALUE_SET' and 'KEY' in block.get('EntityTypes', []):
                         key_text = self._get_text_from_block(block, response['Blocks'])
@@ -61,35 +60,23 @@ class AadharExtractor:
                                 'Value': value_text.strip(),
                                 'Confidence': round(confidence, 2)
                             })
+                
+                # Extract additional key-value pairs from table cells
+                table_kvp = self._extract_kvp_from_tables(response['Blocks'])
+                all_key_value_pairs.extend(table_kvp)
             
             doc.close()
-            
-            # Also collect all text for fallback analysis
-            all_text_blocks = []
-            for block in response['Blocks']:
-                if block['BlockType'] == 'LINE':
-                    text = block.get('Text', '').strip()
-                    confidence = block.get('Confidence', 0)
-                    if text:
-                        all_text_blocks.append({
-                            'text': text,
-                            'confidence': confidence
-                        })
-            
-
-            
-            # Filter and map to specific Aadhar details
-            aadhar_details = self._map_to_aadhar_fields(all_key_value_pairs, all_text_blocks)
             
             # Save to JSON
             json_filename = f"{user_id}_aadhar_extracted.json"
             with open(json_filename, 'w') as f:
-                json.dump(aadhar_details, f, indent=2)
+                json.dump(all_key_value_pairs, f, indent=2)
             
             return {
                 'status': 'success',
+                'extracted_pairs_count': len(all_key_value_pairs),
                 'json_file': json_filename,
-                'data': aadhar_details
+                'data': all_key_value_pairs
             }
             
         except Exception as e:
@@ -118,186 +105,53 @@ class AadharExtractor:
                 return next((b for b in all_blocks if b['Id'] == value_id), None)
         return None
     
-    def _map_to_aadhar_fields(self, key_value_pairs, all_text_blocks):
-        aadhar_data = {
-            'aadhar_number': {'value': '', 'confidence': 0},
-            'name': {'value': '', 'confidence': 0},
-            'date_of_birth': {'value': '', 'confidence': 0},
-            'gender': {'value': '', 'confidence': 0},
-            'address': {'value': '', 'confidence': 0}
-        }
+    def _extract_kvp_from_tables(self, blocks):
+        kvp_pairs = []
+        table_blocks = [block for block in blocks if block['BlockType'] == 'TABLE']
         
-        # First try key-value pairs
-        for pair in key_value_pairs:
-            key = pair['Key'].lower()
-            value = pair['Value']
-            confidence = pair['Confidence']
+        for table_block in table_blocks:
+            table_data = []
+            if 'Relationships' in table_block:
+                for relationship in table_block['Relationships']:
+                    if relationship['Type'] == 'CHILD':
+                        for cell_id in relationship['Ids']:
+                            cell_block = next((b for b in blocks if b['Id'] == cell_id), None)
+                            if cell_block and cell_block['BlockType'] == 'CELL':
+                                row_index = cell_block.get('RowIndex', 1) - 1
+                                col_index = cell_block.get('ColumnIndex', 1) - 1
+                                cell_text = self._get_text_from_block(cell_block, blocks)
+                                
+                                while len(table_data) <= row_index:
+                                    table_data.append([])
+                                while len(table_data[row_index]) <= col_index:
+                                    table_data[row_index].append('')
+                                
+                                table_data[row_index][col_index] = cell_text.strip()
             
-            # Map Aadhar number (12 digits)
-            if len(value.replace(' ', '').replace('-', '')) == 12 and value.replace(' ', '').replace('-', '').isdigit():
-                if confidence > aadhar_data['aadhar_number']['confidence']:
-                    aadhar_data['aadhar_number'] = {
-                        'value': value.replace(' ', '').replace('-', ''),
-                        'confidence': confidence
-                    }
-            
-            # Map Date of Birth
-            if (any(dob_keyword in key for dob_keyword in ['dob', 'birth', 'date']) and '/' in value) or \
-               (len(value) == 10 and value.count('/') == 2 and all(c.isdigit() or c == '/' for c in value)):
-                if confidence > aadhar_data['date_of_birth']['confidence']:
-                    aadhar_data['date_of_birth'] = {
-                        'value': value,
-                        'confidence': confidence
-                    }
-            
-            # Map Gender
-            if value.upper() in ['MALE', 'FEMALE'] or 'female' in value.lower() or 'male' in value.lower():
-                gender_val = 'FEMALE' if 'female' in value.lower() else 'MALE'
-                if confidence > aadhar_data['gender']['confidence']:
-                    aadhar_data['gender'] = {
-                        'value': gender_val,
-                        'confidence': confidence
-                    }
-            
-            # Map Name - look for actual person name
-            if (len(value.split()) >= 1 and len(value.split()) <= 4 and 
-                not value.replace(' ', '').replace('-', '').isdigit() and
-                not any(addr_keyword in value.lower() for addr_keyword in ['nagar', 'delhi', 'road', 'colony', 'sector', 'block', 'street', 'pin', 'north', 'east', 'west', 'south']) and
-                not any(doc_keyword in value.upper() for doc_keyword in ['AADHAAR', 'AADHAR', 'GOVERNMENT', 'INDIA', 'UNIQUE', 'IDENTIFICATION', 'AUTHORITY']) and
-                '/' not in value and len(value) > 2 and len(value) < 50 and
-                not value.upper() in ['MALE', 'FEMALE'] and
-                not re.search(r'\d{6}', value)):
-                # Extract just the name part, remove D/O, S/O etc
-                name_part = re.sub(r'\b(D/O|S/O|W/O)\b.*', '', value, flags=re.IGNORECASE).strip()
-                if name_part and confidence > aadhar_data['name']['confidence']:
-                    aadhar_data['name'] = {
-                        'value': name_part,
-                        'confidence': confidence
-                    }
-            
-            # Map Address (collect and clean address parts)
-            if (len(value) > 10 and 
-                (any(addr_keyword in value.lower() for addr_keyword in ['nagar', 'delhi', 'road', 'colony', 'sector', 'block', 'street', 'pin', 'north', 'east', 'west', 'south']) or
-                 re.search(r'\d{6}', value)) and  # Contains pincode
-                not value.replace(' ', '').replace('-', '').isdigit() and
-                len(value.split()) > 2):
-                
-                # Clean the address value before storing
-                clean_value = self._clean_address_text(value)
-                if clean_value:  # Only add if there's meaningful content after cleaning
-                    existing_addr = aadhar_data['address']['value']
-                    combined_addr = f"{existing_addr} {clean_value}".strip() if existing_addr else clean_value
-                    aadhar_data['address'] = {
-                        'value': combined_addr,
-                        'confidence': max(confidence, aadhar_data['address']['confidence'])
-                    }
+            # Extract key-value pairs from table rows
+            for row in table_data:
+                if len(row) >= 2 and row[0] and row[1]:
+                    key = str(row[0]).strip()
+                    value = str(row[1]).strip()
+                    
+                    # Skip headers and non-meaningful pairs for Aadhar
+                    if (key and value and 
+                        not key.lower() in ['details', 'description', 'field', 'value'] and
+                        not value.lower() in ['field', 'value', 'description']):
+                        
+                        kvp_pairs.append({
+                            'Key': key,
+                            'Value': value,
+                            'Confidence': 85.0
+                        })
         
-        # Fallback: Check all text blocks for missing fields
-        for block in all_text_blocks:
-            text = block['text']
-            confidence = block['confidence']
-            
-            # Find Aadhar number if not found
-            if not aadhar_data['aadhar_number']['value']:
-                clean_text = text.replace(' ', '').replace('-', '')
-                if len(clean_text) == 12 and clean_text.isdigit():
-                    aadhar_data['aadhar_number'] = {
-                        'value': clean_text,
-                        'confidence': confidence
-                    }
-            
-            # Find correct date of birth if not found or incorrect
-            if not aadhar_data['date_of_birth']['value'] or aadhar_data['date_of_birth']['value'] == '07/09/2020':
-                # Look for date pattern that's not the issue date
-                if re.match(r'\d{2}/\d{2}/\d{4}', text) and text != '07/09/2020':
-                    # Check if it's a reasonable birth date (not future, not too old)
-                    year = int(text.split('/')[-1])
-                    if 1950 <= year <= 2010:
-                        aadhar_data['date_of_birth'] = {
-                            'value': text,
-                            'confidence': confidence
-                        }
-            
-            # Find name if not found
-            if not aadhar_data['name']['value']:
-                # Look for potential names (1-4 words, not numbers, not addresses)
-                if (len(text.split()) >= 1 and len(text.split()) <= 4 and 
-                    not text.replace(' ', '').replace('-', '').isdigit() and
-                    not any(addr_keyword in text.lower() for addr_keyword in ['nagar', 'delhi', 'road', 'colony', 'sector', 'block', 'street', 'pin', 'north', 'east', 'west', 'south']) and
-                    not any(doc_keyword in text.upper() for doc_keyword in ['AADHAAR', 'AADHAR', 'GOVERNMENT', 'INDIA', 'UNIQUE', 'IDENTIFICATION', 'AUTHORITY']) and
-                    '/' not in text and len(text) > 2 and len(text) < 50 and
-                    not text.upper() in ['MALE', 'FEMALE'] and
-                    not re.search(r'\d{6}', text) and
-                    not re.search(r'\d{12}', text)):
-                    # Extract just the name part, remove D/O, S/O etc
-                    name_part = re.sub(r'\b(D/O|S/O|W/O)\b.*', '', text, flags=re.IGNORECASE).strip()
-                    name_part = re.sub(r'\b(JOH|PR|DOB)\b.*', '', name_part, flags=re.IGNORECASE).strip()
-                    if name_part and confidence > aadhar_data['name']['confidence']:
-                        aadhar_data['name'] = {
-                            'value': name_part,
-                            'confidence': confidence
-                        }
-            
-            # Collect clean address parts (exclude D/O, S/O content)
-            if (len(text) > 10 and 
-                (any(addr_keyword in text.lower() for addr_keyword in ['nagar', 'delhi', 'road', 'colony', 'sector', 'block', 'street', 'mandoli', 'shahdara', 'north', 'east']) or
-                 re.search(r'\d{6}', text)) and  # Contains pincode
-                not text.replace(' ', '').replace('-', '').isdigit() and
-                len(text.split()) > 1):
-                
-                # Clean the address text before adding
-                clean_text = self._clean_address_text(text)
-                if clean_text:  # Only add if there's meaningful content after cleaning
-                    existing_addr = aadhar_data['address']['value']
-                    if not existing_addr or clean_text not in existing_addr:
-                        combined_addr = f"{existing_addr} {clean_text}".strip() if existing_addr else clean_text
-                        aadhar_data['address'] = {
-                            'value': combined_addr,
-                            'confidence': max(confidence, aadhar_data['address']['confidence'])
-                        }
-        
-        return aadhar_data
-    
-    def _clean_address_text(self, text):
-        """Clean address text by removing D/O, S/O content and unwanted codes"""
-        clean_text = text
-        
-        # Remove D/O, S/O content completely
-        clean_text = re.sub(r'D/O\s+[^,]*', '', clean_text, flags=re.IGNORECASE)
-        clean_text = re.sub(r'S/O\s+[^,]*', '', clean_text, flags=re.IGNORECASE)
-        clean_text = re.sub(r'W/O\s+[^,]*', '', clean_text, flags=re.IGNORECASE)
-        
-        # Remove unwanted codes and references
-        clean_text = re.sub(r'\b\d+/-\s*\d+\s*for\s*\d+,?\s*', '', clean_text)
-        clean_text = re.sub(r'\bTell\s*\d+\s*\d+,?\s*', '', clean_text)
-        clean_text = re.sub(r'\b\d+/\d+\s*TTR,?\s*', '', clean_text)
-        clean_text = re.sub(r'\b\d{7},?\s*', '', clean_text)  # Remove 7-digit numbers
-        clean_text = re.sub(r'\b\d+[A-Z]+\s*[a-z]+,?\s*', '', clean_text)  # Remove codes like 3TRT gaff
-        clean_text = re.sub(r'\bReft\s*-\s*-\s*', '', clean_text)
-        clean_text = re.sub(r'\bNo\.\s*', '', clean_text)
-        clean_text = re.sub(r'\bH\.\s*E\s*-\s*-\s*\d+\s*Street', '', clean_text)  # Remove H. E - - 376 Street
-        
-        # Clean up extra spaces, commas and hyphens
-        clean_text = re.sub(r'\s*,\s*,\s*', ', ', clean_text)
-        clean_text = re.sub(r'^\s*,\s*', '', clean_text)
-        clean_text = re.sub(r'\s*-\s*,\s*', ' ', clean_text)
-        clean_text = re.sub(r'\s+', ' ', clean_text).strip()
-        
-        # Extract only the meaningful address parts
-        if 'Ashok Nagar' in clean_text:
-            # Find the pattern: number + Ashok Nagar + area + city + pincode
-            match = re.search(r'(\d+\s+Ashok Nagar.*?Delhi.*?\d{6})', clean_text)
-            if match:
-                clean_text = match.group(1)
-        
-        return clean_text if len(clean_text) > 5 else ''  # Return only if meaningful content remains
+        return kvp_pairs
 
 def extract_aadhar(user_id):
     extractor = AadharExtractor()
     return extractor.extract_aadhar_data(user_id)
 
 if __name__ == "__main__":
-    # Use the specific user ID provided
-    user_id = "cadda9d1-d6c8-4907-b873-6070696e575a"
+    user_id = input("Enter user ID: ")
     result = extract_aadhar(user_id)
     print(json.dumps(result, indent=2))

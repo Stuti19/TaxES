@@ -1,22 +1,62 @@
-{
-  "aadhar_number": {
-    "value": "226816223671",
-    "confidence": 96.71197509765625
+[
+  {
+    "Key": "Date",
+    "Value": "07/09/2020",
+    "Confidence": 72.66
   },
-  "name": {
-    "value": "Anjali",
-    "confidence": 68.9
+  {
+    "Key": "H1601 Mobile 2268 VID :",
+    "Value": "9111 8122 7978 3936",
+    "Confidence": 93.85
   },
-  "date_of_birth": {
-    "value": "18/09/1999",
-    "confidence": 95.25
+  {
+    "Key": "Anjali JOH PR / DOB",
+    "Value": "winte / FEMALE",
+    "Confidence": 68.9
   },
-  "gender": {
-    "value": "FEMALE",
-    "confidence": 68.9
+  {
+    "Key": "No.",
+    "Value": "9582539507",
+    "Confidence": 95.11
   },
-  "address": {
-    "value": "110093 15 Ashok Nagar Shahdara Mandoli Saboli North East Delhi - 110093",
-    "confidence": 98.83502960205078
+  {
+    "Key": ":",
+    "Value": "18/09/1999",
+    "Confidence": 95.25
+  },
+  {
+    "Key": "- -",
+    "Value": "GOVERNMENT OF INDIA",
+    "Confidence": 85.0
+  },
+  {
+    "Key": "\u0447\u0430\u0442:",
+    "Value": "D/O Joh21 3.4R, 407/- 70 for 304, Tell 70 94, 3121/05 TTR, 2116921, 3TRT gaff, 110093",
+    "Confidence": 94.38
+  },
+  {
+    "Key": "Reft - -",
+    "Value": "",
+    "Confidence": 84.28
+  },
+  {
+    "Key": "help@uidai.gov.in",
+    "Value": "",
+    "Confidence": 92.48
+  },
+  {
+    "Key": "No.",
+    "Value": "15 Ashok Nagar Shahdara Mandoli",
+    "Confidence": 51.54
+  },
+  {
+    "Key": "Saboli North East Delhi -",
+    "Value": "110093 2268 1622 3671",
+    "Confidence": 59.69
+  },
+  {
+    "Key": "- -",
+    "Value": "NIQUE IDENTIF ICATION AUTHORITY OF INDIA",
+    "Confidence": 85.0
   }
-}
+]
