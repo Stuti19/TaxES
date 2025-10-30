@@ -3,18 +3,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ITRProcessFlow } from "@/components/ITRProcessFlow";
+
 import { 
   Upload, 
   FileText, 
   CreditCard, 
-  Building2, 
+  BookOpen, 
   Eye,
   CheckCircle,
   Clock,
-  User,
   Sparkles,
-  LogOut,
   Loader2
 } from "lucide-react";
 import { toast } from "sonner";
@@ -44,10 +42,10 @@ export const Dashboard = () => {
       color: "text-blue-500"
     },
     {
-      id: "pan",
-      name: "PAN Card",
-      icon: Building2,
-      description: "Upload your PAN Card PDF",
+      id: "passbook",
+      name: "Bank Passbook",
+      icon: BookOpen,
+      description: "Upload your Bank Passbook PDF",
       color: "text-green-500"
     },
     {
@@ -91,16 +89,11 @@ export const Dashboard = () => {
     setSelectedFile(file);
   };
 
-  const handleSignOut = async () => {
-    const { error } = await signOut();
-    if (error) {
-      toast.error("Error signing out");
-    }
-  };
+
 
   const handleProcessDocuments = async () => {
     if (uploadedFiles.length < 3) {
-      toast.error("Please upload all three documents (Aadhar, PAN Card, Form 16)");
+      toast.error("Please upload all three documents (Aadhar, Bank Passbook, Form 16)");
       return;
     }
 
@@ -110,10 +103,10 @@ export const Dashboard = () => {
     }
 
     const aadharFile = uploadedFiles.find(f => f.type === 'aadhar')?.file;
-    const panFile = uploadedFiles.find(f => f.type === 'pan')?.file;
+    const passbookFile = uploadedFiles.find(f => f.type === 'passbook')?.file;
     const form16File = uploadedFiles.find(f => f.type === 'form16')?.file;
 
-    if (!aadharFile || !panFile || !form16File) {
+    if (!aadharFile || !passbookFile || !form16File) {
       toast.error("Missing required documents");
       return;
     }
@@ -126,7 +119,7 @@ export const Dashboard = () => {
       const result = await uploadDocumentsToAPI(
         user.id,
         aadharFile,
-        panFile,
+        passbookFile,
         form16File
       );
       
@@ -160,29 +153,12 @@ export const Dashboard = () => {
             </Badge>
           </div>
           
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-3 px-3 py-2 bg-muted/50 rounded-lg">
-              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                <User className="h-4 w-4 text-primary" />
-              </div>
-              <div className="text-sm">
-                <div className="font-medium">{user?.user_metadata?.full_name || "Professional User"}</div>
-                <div className="text-muted-foreground text-xs">{user?.email}</div>
-              </div>
-            </div>
-            <Button variant="outline" size="sm" onClick={handleSignOut} className="flex items-center gap-2">
-              <LogOut className="h-4 w-4" />
-              Sign Out
-            </Button>
-          </div>
+
         </div>
       </header>
 
       <div className="container py-8">
-        {/* ITR Process Flow */}
-        <div className="mb-12">
-          <ITRProcessFlow />
-        </div>
+
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Upload Section */}
