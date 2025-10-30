@@ -1,13 +1,16 @@
 import json
 from openpyxl import load_workbook
 
-def fill_itr_excel(form16_json_path, aadhar_json_path, excel_file_path, output_file_path):
+def fill_itr_excel(form16_json_path, aadhar_json_path, passbook_json_path, excel_file_path, output_file_path):
     # Load JSON data
     with open(form16_json_path, 'r') as f:
         form16_data = json.load(f)
     
     with open(aadhar_json_path, 'r') as f:
         aadhar_data = json.load(f)
+    
+    with open(passbook_json_path, 'r') as f:
+        passbook_data = json.load(f)
     
     # Load Excel workbook
     wb = load_workbook(excel_file_path)
@@ -46,6 +49,28 @@ def fill_itr_excel(form16_json_path, aadhar_json_path, excel_file_path, output_f
         "state": "E15"
     }
     
+    # Parse name from passbook
+    def parse_name(full_name):
+        if not full_name:
+            return "", "", ""
+        
+        # Remove common prefixes and clean
+        name_parts = full_name.replace("MR ", "").replace("MRS ", "").replace("MS ", "").strip().split()
+        
+        if len(name_parts) == 1:
+            return name_parts[0], "", ""
+        elif len(name_parts) == 2:
+            return name_parts[0], "", name_parts[1]
+        else:
+            return name_parts[0], " ".join(name_parts[1:-1]), name_parts[-1]
+    
+    # Passbook cell mapping
+    passbook_mapping = {
+        "accountNumber": "AN9",
+        "bankName": "E9",
+        "IFSC_Code": "AN10"
+    }
+    
     # Deductions that need dual cells
     dual_cell_mapping = {
         "deduction_80C": ["AB96", "AN96"],
@@ -69,6 +94,18 @@ def fill_itr_excel(form16_json_path, aadhar_json_path, excel_file_path, output_f
         if json_key in aadhar_data:
             ws[cell_address] = aadhar_data[json_key]
     
+    # Fill passbook data
+    for json_key, cell_address in passbook_mapping.items():
+        if json_key in passbook_data:
+            ws[cell_address] = passbook_data[json_key]
+    
+    # Fill parsed name from passbook
+    if "name" in passbook_data:
+        first_name, middle_name, last_name = parse_name(passbook_data["name"])
+        ws["E7"] = first_name
+        ws["O7"] = middle_name
+        ws["Y7"] = last_name
+    
     # Fill dual cells for deductions
     for json_key, cell_addresses in dual_cell_mapping.items():
         if json_key in form16_data:
@@ -81,11 +118,12 @@ def fill_itr_excel(form16_json_path, aadhar_json_path, excel_file_path, output_f
 
 if __name__ == "__main__":
     form16_json = "23d3cb64-a2b3-4d75-85c3-77a7923986a3_form16_parsed.json"
-    aadhar_json = "cadda9d1-d6c8-4907-b873-6070696e575a_aadhar_parsed.json"
+    aadhar_json = "aadhar_parsed.json"
+    passbook_json = "passbook_parsed.json"
     excel_template = "itr_temp.xlsx"
-    output_file = "filled_itr_updated.xlsx"
+    output_file = "filled_itr_final.xlsx"
     
-    fill_itr_excel(form16_json, aadhar_json, excel_template, output_file)
+    fill_itr_excel(form16_json, aadhar_json, passbook_json, excel_template, output_file)
 
 
 

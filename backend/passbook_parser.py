@@ -166,7 +166,7 @@ class PassbookParser:
         return table_extracted
 
     def save_parsed_data(self, parsed_data, user_id):
-        filename = f"{user_id}_passbook_parsed.json"
+        filename = "passbook_parsed.json"
         with open(filename, 'w') as f:
             json.dump(parsed_data, f, indent=2)
         return filename
@@ -175,7 +175,7 @@ def parse_passbook(user_id, extracted_data_file=None):
     parser = PassbookParser()
     
     if not extracted_data_file:
-        extracted_data_file = f"{user_id}_passbook_extracted.json"
+        extracted_data_file = "passbook_extracted.json"
     
     try:
         parsed_data = parser.parse_passbook_data(extracted_data_file)

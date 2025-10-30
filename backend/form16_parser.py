@@ -210,7 +210,7 @@ class Form16Parser:
         return table_extracted
 
     def save_parsed_data(self, parsed_data, user_id):
-        filename = f"{user_id}_form16_parsed.json"
+        filename = "form16_parsed.json"
         with open(filename, 'w') as f:
             json.dump(parsed_data, f, indent=2)
         return filename
@@ -219,7 +219,7 @@ def parse_form16(user_id, extracted_data_file=None):
     parser = Form16Parser()
     
     if not extracted_data_file:
-        extracted_data_file = f"{user_id}_form16_extracted.json"
+        extracted_data_file = "form16_extracted.json"
     
     try:
         parsed_data = parser.parse_form16_data(extracted_data_file)

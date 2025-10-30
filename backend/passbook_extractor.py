@@ -83,7 +83,7 @@ class PassbookExtractor:
             doc.close()
             
             # Save to JSON
-            json_filename = f"{user_id}_passbook_extracted.json"
+            json_filename = "passbook_extracted.json"
             with open(json_filename, 'w') as f:
                 json.dump(all_key_value_pairs, f, indent=2)
             

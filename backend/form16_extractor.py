@@ -68,7 +68,7 @@ class Form16Extractor:
             doc.close()
             
             # Save to JSON
-            json_filename = f"{user_id}_form16_extracted.json"
+            json_filename = "form16_extracted.json"
             with open(json_filename, 'w') as f:
                 json.dump(all_key_value_pairs, f, indent=2)
             

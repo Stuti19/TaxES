@@ -22,19 +22,24 @@ class AadhaarExtractor:
         self.ocr_reader = None
 
     def install_requirements(self):
-        """Install required packages if missing"""
+        """Check required packages"""
         packages = [
             ('fitz', 'PyMuPDF'),
             ('easyocr', 'easyocr'),
             ('PIL', 'Pillow')
         ]
-        import subprocess
+        missing = []
         for module, pip_name in packages:
             try:
                 __import__(module)
             except ImportError:
-                print(f"Installing {pip_name}...")
-                subprocess.check_call([sys.executable, "-m", "pip", "install", pip_name])
+                missing.append(pip_name)
+        
+        if missing:
+            print(f"Missing packages: {', '.join(missing)}")
+            print("Please install manually: pip install " + ' '.join(missing))
+            return False
+        return True
 
     def get_ocr_reader(self):
         """Initialize EasyOCR reader"""
@@ -243,7 +248,9 @@ def main():
     print("AADHAAR CARD DATA EXTRACTOR - FIXED ADDRESS VERSION")
     print("=" * 60)
     extractor = AadhaarExtractor()
-    extractor.install_requirements()
+    if not extractor.install_requirements():
+        print("Please install missing packages and try again.")
+        return
     
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
