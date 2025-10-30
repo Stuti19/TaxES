@@ -1,4 +1,5 @@
 import json
+import os
 from openpyxl import load_workbook
 
 def fill_itr_excel(form16_json_path, aadhar_json_path, passbook_json_path, excel_file_path, output_file_path):
@@ -39,7 +40,7 @@ def fill_itr_excel(form16_json_path, aadhar_json_path, passbook_json_path, excel
     # Aadhar cell mapping
     aadhar_mapping = {
         "aadhar_number": "AN8",
-        "date_of_birth": "AN11",
+        "dob": "AN11",
         "pin_code": "AA15",
         "flat_door_block_no": "E11",
         "building_premises_village": "O11",
@@ -66,9 +67,6 @@ def fill_itr_excel(form16_json_path, aadhar_json_path, passbook_json_path, excel
     
     # Passbook cell mapping
     passbook_mapping = {
-        "accountNumber": "AN9",
-        "bankName": "E9",
-        "IFSC_Code": "AN10"
     }
     
     # Deductions that need dual cells
@@ -112,16 +110,26 @@ def fill_itr_excel(form16_json_path, aadhar_json_path, passbook_json_path, excel
             for cell_address in cell_addresses:
                 ws[cell_address] = form16_data[json_key]
     
-    # Save filled workbook
-    wb.save(output_file_path)
-    print(f"Excel file filled and saved to: {output_file_path}")
+    # Try to remove existing file, if locked use different name
+    try:
+        if os.path.exists(output_file_path):
+            os.remove(output_file_path)
+        wb.save(output_file_path)
+        print(f"Excel file filled and saved to: {output_file_path}")
+    except PermissionError:
+        # File is locked, use timestamp suffix
+        import time
+        timestamp = int(time.time())
+        new_name = output_file_path.replace('.xlsx', f'_{timestamp}.xlsx')
+        wb.save(new_name)
+        print(f"Original file locked. Saved to: {new_name}")
 
 if __name__ == "__main__":
     form16_json = "23d3cb64-a2b3-4d75-85c3-77a7923986a3_form16_parsed.json"
     aadhar_json = "aadhar_parsed.json"
     passbook_json = "passbook_parsed.json"
     excel_template = "itr_temp.xlsx"
-    output_file = "filled_itr_final.xlsx"
+    output_file = "filled_itr_complete.xlsx"
     
     fill_itr_excel(form16_json, aadhar_json, passbook_json, excel_template, output_file)
 

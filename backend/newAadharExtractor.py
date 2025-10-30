@@ -1,5 +1,5 @@
 """
-Aadhaar Card Data Extractor - Fixed Address Extraction
+aadhar Card Data Extractor - Fixed Address Extraction
 Correctly extracts Address from page 2, ignoring Hindi text
 """
 
@@ -9,10 +9,10 @@ import json
 from pathlib import Path
 
 
-class AadhaarExtractor:
+class aadharExtractor:
     def __init__(self):
         self.extracted_data = {
-            'aadhaar_number': None,
+            'aadhar_number': None,
             'name': None,
             'dob': None,
             'gender': None,
@@ -59,8 +59,8 @@ class AadhaarExtractor:
         line = ' '.join(line.split()).strip()
         return line
 
-    def extract_aadhaar_number(self, text):
-        """Extract 12-digit Aadhaar number"""
+    def extract_aadhar_number(self, text):
+        """Extract 12-digit aadhar number"""
         patterns = [
             r'\b(\d{4})\s+(\d{4})\s+(\d{4})\b',
             r'\b(\d{4})-(\d{4})-(\d{4})\b',
@@ -134,7 +134,7 @@ class AadhaarExtractor:
                 if len(line) < 3:
                     continue
                 
-                # Skip lines that look like Aadhaar numbers
+                # Skip lines that look like aadhar numbers
                 if re.search(r'\d{4}\s?\d{4}\s?\d{4}', line):
                     continue
                 
@@ -215,7 +215,7 @@ class AadhaarExtractor:
         return text
 
     def extract_from_file(self, file_path):
-        """Extract all Aadhaar fields from PDF"""
+        """Extract all aadhar fields from PDF"""
         file_path = Path(file_path)
         if not file_path.exists():
             print("File not found!")
@@ -225,7 +225,7 @@ class AadhaarExtractor:
             print("Could not extract text.")
             return None
         self.extracted_data['raw_text'] = raw_text
-        self.extracted_data['aadhaar_number'] = self.extract_aadhaar_number(raw_text)
+        self.extracted_data['aadhar_number'] = self.extract_aadhar_number(raw_text)
         self.extracted_data['dob'] = self.extract_dob(raw_text)
         self.extracted_data['name'] = self.extract_name(raw_text)
         self.extracted_data['gender'] = self.extract_gender(raw_text)
@@ -235,7 +235,7 @@ class AadhaarExtractor:
     def print_results(self):
         """Print extracted info neatly"""
         print("\n" + "=" * 50)
-        print("EXTRACTED AADHAAR INFORMATION")
+        print("EXTRACTED aadhar INFORMATION")
         print("=" * 50)
         for key, val in self.extracted_data.items():
             if key != 'raw_text':
@@ -245,9 +245,9 @@ class AadhaarExtractor:
 
 def main():
     print("\n" + "=" * 60)
-    print("AADHAAR CARD DATA EXTRACTOR - FIXED ADDRESS VERSION")
+    print("aadhar CARD DATA EXTRACTOR - FIXED ADDRESS VERSION")
     print("=" * 60)
-    extractor = AadhaarExtractor()
+    extractor = aadharExtractor()
     if not extractor.install_requirements():
         print("Please install missing packages and try again.")
         return
@@ -255,7 +255,7 @@ def main():
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
     else:
-        file_path = input("\nEnter Aadhaar PDF path: ").strip().strip('"\'')
+        file_path = input("\nEnter aadhar PDF path: ").strip().strip('"\'')
     
     result = extractor.extract_from_file(file_path)
     if result:
