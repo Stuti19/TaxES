@@ -172,12 +172,10 @@ export const Dashboard = () => {
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                TaxES Pro
+                TaxES
               </h1>
             </div>
-            <Badge variant="secondary" className="bg-primary/10 text-primary">
-              Professional Dashboard
-            </Badge>
+
           </div>
           
 
@@ -194,9 +192,6 @@ export const Dashboard = () => {
               <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Document Management Center
               </h2>
-              <p className="text-muted-foreground">
-                Upload your tax documents to our secure, enterprise-grade platform for automated ITR processing
-              </p>
             </div>
 
             <div className="grid gap-6">
@@ -289,9 +284,9 @@ export const Dashboard = () => {
                       <CheckCircle className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <CardTitle className="text-green-800">Professional Processing Ready</CardTitle>
+                      <CardTitle className="text-green-800">Processing Ready</CardTitle>
                       <CardDescription className="text-green-600">
-                        All documents uploaded securely. Enterprise AI processing available.
+                        Ready to process your documents.
                       </CardDescription>
                     </div>
                   </div>
@@ -311,7 +306,7 @@ export const Dashboard = () => {
                     ) : (
                       <>
                         <Sparkles className="w-5 h-5 mr-2" />
-                        Start Professional ITR Processing
+                        Start Processing
                       </>
                     )}
                   </Button>

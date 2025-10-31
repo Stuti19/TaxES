@@ -64,6 +64,8 @@ class ExcelFiller:
                 "prerequisites_section_17_2": "AO37",
                 "profits_section_17_3": "AO38",
                 "total_exemption_section_10": "AO45",
+                "net_salary": "AO52",
+                "deduction_under_sec16": "AO53",
                 "standard_deduction_16_ia": "AO54",
                 "entertainment_allowance_16_ii": "AO55",
                 "tax_on_employment_16_iii": "AO56",
@@ -183,10 +185,23 @@ class ExcelFiller:
         """Calculate and fill derived tax fields"""
         try:
             # Get values with default 0 if not present or not numeric
+            gross_salary = self._get_numeric_value(form16_data, "gross_salary")
+            total_exemption_section_10 = self._get_numeric_value(form16_data, "total_exemption_section_10")
+            standard_deduction_16_ia = self._get_numeric_value(form16_data, "standard_deduction_16_ia")
+            entertainment_allowance_16_ii = self._get_numeric_value(form16_data, "entertainment_allowance_16_ii")
+            tax_on_employment_16_iii = self._get_numeric_value(form16_data, "tax_on_employment_16_iii")
             tax_on_total_income = self._get_numeric_value(form16_data, "tax_on_total_income")
             rebate_87A = self._get_numeric_value(form16_data, "rebate_87A")
             health_education_cess = self._get_numeric_value(form16_data, "health_education_cess")
             relief_section_89 = self._get_numeric_value(form16_data, "relief_section_89")
+            
+            # Calculate net_salary = gross_salary - total_exemption_section_10
+            net_salary = gross_salary - total_exemption_section_10
+            ws["AO52"] = net_salary
+            
+            # Calculate deduction_under_sec16 = standard_deduction_16_ia + entertainment_allowance_16_ii + tax_on_employment_16_iii
+            deduction_under_sec16 = standard_deduction_16_ia + entertainment_allowance_16_ii + tax_on_employment_16_iii
+            ws["AO53"] = deduction_under_sec16
             
             # Calculate tax_payable_after_rebate = tax_on_total_income - rebate_87A
             tax_payable_after_rebate = tax_on_total_income - rebate_87A
@@ -200,7 +215,9 @@ class ExcelFiller:
             balance_tax_after_relief = total_tax_and_cess - relief_section_89
             ws["AO148"] = balance_tax_after_relief
             
-            print(f"Calculated tax fields:")
+            print(f"Calculated fields:")
+            print(f"  Net salary (AO52): {net_salary}")
+            print(f"  Deduction under sec16 (AO53): {deduction_under_sec16}")
             print(f"  Tax payable after rebate (AO142): {tax_payable_after_rebate}")
             print(f"  Total tax and cess (AO145): {total_tax_and_cess}")
             print(f"  Balance tax after relief (AO148): {balance_tax_after_relief}")

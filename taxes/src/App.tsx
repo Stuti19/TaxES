@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Dashboard } from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import Manual from "./pages/manual";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,11 @@ const App = () => (
             <Route path="/" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/manual" element={
+              <ProtectedRoute>
+                <Manual />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
