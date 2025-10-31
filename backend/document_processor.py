@@ -135,13 +135,13 @@ class DocumentProcessor:
 
         return results
 
-    def generate_excel(self):
+    def generate_excel(self, email='', mobile_no=''):
         """Generate Excel file from parsed JSON data"""
         try:
             print("Starting Excel generation...")
             from excel_filler_local import ExcelFiller
             filler = ExcelFiller(session_id=self.session_id)
-            result = filler.fill_itr_excel()
+            result = filler.fill_itr_excel(email=email, mobile_no=mobile_no)
             print(f"Excel generation result: {result}")
             return result
         except Exception as e:
@@ -159,7 +159,7 @@ class DocumentProcessor:
         except Exception as e:
             print(f"Error cleaning up session {self.session_id}: {e}")
 
-    def process_documents(self, aadhar_file, passbook_file, form16_file):
+    def process_documents(self, aadhar_file, passbook_file, form16_file, email='', mobile_no=''):
         """Complete document processing pipeline"""
         try:
             # Step 1: Save files
@@ -182,7 +182,7 @@ class DocumentProcessor:
             
             # Step 4: Generate Excel
             print("Step 4: Generating Excel")
-            excel_result = self.generate_excel()
+            excel_result = self.generate_excel(email, mobile_no)
             print(f"Excel result: {excel_result}")
         except Exception as e:
             print(f"Error in process_documents: {str(e)}")

@@ -5,9 +5,14 @@ import tempfile
 from pathlib import Path
 from document_processor import DocumentProcessor
 import uuid
+from werkzeug.serving import WSGIRequestHandler
 
 app = Flask(__name__)
 CORS(app, origins='*')  # Allow all origins for development
+
+# Configure request timeout
+WSGIRequestHandler.timeout = 300  # 5 minutes timeout
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # Store active sessions
 active_sessions = {}
@@ -33,6 +38,8 @@ def process_documents():
         passbook_file = request.files['passbook']
         form16_file = request.files['form16']
         user_id = request.form.get('user_id', 'default_user')
+        email = request.form.get('email', '')
+        mobile_no = request.form.get('mobile_no', '')
 
         # Validate file types
         allowed_extensions = {'.pdf'}
@@ -63,7 +70,7 @@ def process_documents():
 
         # Process documents
         print(f"Processing documents for session: {session_id}")
-        result = processor.process_documents(temp_aadhar, temp_passbook, temp_form16)
+        result = processor.process_documents(temp_aadhar, temp_passbook, temp_form16, email, mobile_no)
         print(f"Processing completed with status: {result.get('status', 'unknown')}")
 
         # Clean up temporary files
@@ -79,7 +86,8 @@ def process_documents():
                 'parsing_results': result.get('parsing_results', {}),
                 'excel_result': result.get('excel_result', {}),
                 'output_files': result.get('output_files', {}),
-                'redirect_to': f'/output.html?session={session_id}'
+                'redirect_to': f'/output.html?session={session_id}',
+                'contact_info': {'email': email, 'mobile_no': mobile_no}
             }
             print(f"Sending success response: {response_data}")
             response = jsonify(response_data)
@@ -158,4 +166,4 @@ def test_endpoint():
     return jsonify({'message': 'Server is working', 'method': request.method})
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    app.run(debug=False, host='0.0.0.0', port=8000)

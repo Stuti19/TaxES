@@ -18,7 +18,7 @@ class ExcelFiller:
         # Create excel directory if it doesn't exist
         self.excel_dir.mkdir(parents=True, exist_ok=True)
 
-    def fill_itr_excel(self, template_path=None):
+    def fill_itr_excel(self, template_path=None, email='', mobile_no=''):
         """Fill ITR Excel using parsed JSON files"""
         try:
             # Set template path
@@ -151,6 +151,12 @@ class ExcelFiller:
                 if json_key in form16_data and form16_data[json_key]:
                     for cell_address in cell_addresses:
                         ws[cell_address] = form16_data[json_key]
+            
+            # Fill contact information
+            if email:
+                ws["E28"] = email
+            if mobile_no:
+                ws["Q28"] = mobile_no
             
             # Calculate and fill derived tax fields
             self._fill_calculated_tax_fields(ws, form16_data)

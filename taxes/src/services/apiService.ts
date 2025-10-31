@@ -15,7 +15,9 @@ export const uploadDocumentsToAPI = async (
   userId: string,
   aadharFile: File,
   passbookFile: File,
-  form16File: File
+  form16File: File,
+  email?: string,
+  mobileNo?: string
 ): Promise<UploadDocumentsResponse> => {
   try {
     const formData = new FormData();
@@ -23,6 +25,8 @@ export const uploadDocumentsToAPI = async (
     formData.append('aadhar', aadharFile);
     formData.append('passbook', passbookFile);
     formData.append('form16', form16File);
+    if (email) formData.append('email', email);
+    if (mobileNo) formData.append('mobile_no', mobileNo);
 
     console.log('Sending request to:', `${API_BASE_URL}/process-documents`);
     
@@ -32,6 +36,7 @@ export const uploadDocumentsToAPI = async (
       headers: {
         'Accept': 'application/json',
       },
+      signal: AbortSignal.timeout(300000), // 5 minutes timeout
     });
 
     console.log('Response status:', response.status);

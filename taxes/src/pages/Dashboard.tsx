@@ -13,7 +13,9 @@ import {
   CheckCircle,
   Clock,
   Sparkles,
-  Loader2
+  Loader2,
+  Mail,
+  Phone
 } from "lucide-react";
 import { toast } from "sonner";
 import { uploadDocumentsToAPI } from "@/services/apiService";
@@ -32,6 +34,8 @@ export const Dashboard = () => {
   const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [email, setEmail] = useState("");
+  const [mobileNo, setMobileNo] = useState("");
 
   const documentTypes = [
     {
@@ -97,6 +101,11 @@ export const Dashboard = () => {
       return;
     }
 
+    if (!email || !mobileNo) {
+      toast.error("Please enter your email and mobile number");
+      return;
+    }
+
     if (!user?.id) {
       toast.error("User not authenticated");
       return;
@@ -134,7 +143,9 @@ export const Dashboard = () => {
         user.id,
         aadharFile,
         passbookFile,
-        form16File
+        form16File,
+        email,
+        mobileNo
       );
       
       console.log('Processing result:', result);
@@ -193,6 +204,51 @@ export const Dashboard = () => {
                 Document Management Center
               </h2>
             </div>
+
+            {/* Contact Information */}
+            <Card className="professional-card">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Mail className="h-5 w-5 text-blue-500" />
+                  <span>Contact Information</span>
+                </CardTitle>
+                <CardDescription>
+                  Please provide your contact details for ITR processing
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium flex items-center space-x-2">
+                      <Mail className="h-4 w-4" />
+                      <span>Email Address</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email address"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium flex items-center space-x-2">
+                      <Phone className="h-4 w-4" />
+                      <span>Mobile Number</span>
+                    </label>
+                    <input
+                      type="tel"
+                      value={mobileNo}
+                      onChange={(e) => setMobileNo(e.target.value)}
+                      placeholder="Enter your mobile number"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             <div className="grid gap-6">
               {documentTypes.map((docType) => {

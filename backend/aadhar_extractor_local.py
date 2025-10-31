@@ -15,13 +15,18 @@ class AadharExtractorLocal:
         self.ocr_reader = None
 
     def get_ocr_reader(self):
-        """Initialize EasyOCR reader"""
+        """Initialize EasyOCR reader with optimizations"""
         if self.ocr_reader is None:
             try:
                 import easyocr
-                self.ocr_reader = easyocr.Reader(['en'], gpu=False, verbose=False)
+                import os
+                os.environ['EASYOCR_MODULE_PATH'] = os.path.expanduser('~/.EasyOCR')
+                self.ocr_reader = easyocr.Reader(['en'], gpu=False, verbose=False, download_enabled=False)
             except ImportError:
                 print("EasyOCR not installed. Please install: pip install easyocr")
+                return None
+            except Exception as e:
+                print(f"EasyOCR initialization error: {e}")
                 return None
         return self.ocr_reader
 
