@@ -4,10 +4,16 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 class ExcelFiller:
-    def __init__(self):
-        self.base_dir = Path("taxes_files")
-        self.parsed_dir = self.base_dir / "parsed"
-        self.excel_dir = self.base_dir / "excel"
+    def __init__(self, session_id=None):
+        if session_id:
+            self.base_dir = Path("taxes_files") / session_id
+            self.parsed_dir = self.base_dir / "parsed"
+            self.excel_dir = self.base_dir / "excel"
+        else:
+            # Fallback to old structure for backward compatibility
+            self.base_dir = Path("taxes_files")
+            self.parsed_dir = self.base_dir / "parsed"
+            self.excel_dir = self.base_dir / "excel"
         
         # Create excel directory if it doesn't exist
         self.excel_dir.mkdir(parents=True, exist_ok=True)

@@ -113,8 +113,22 @@ export const Dashboard = () => {
 
     setIsProcessing(true);
     
+    // Test server connectivity first
+    try {
+      const testResponse = await fetch('http://localhost:8000/health');
+      if (!testResponse.ok) {
+        throw new Error('Server not reachable');
+      }
+      console.log('Server connectivity test passed');
+    } catch (error) {
+      toast.error('Cannot connect to server. Please check if the backend is running.');
+      setIsProcessing(false);
+      return;
+    }
+    
     try {
       toast.info("Uploading documents to secure cloud storage...");
+      console.log('Starting document processing...');
       
       const result = await uploadDocumentsToAPI(
         user.id,
@@ -123,19 +137,25 @@ export const Dashboard = () => {
         form16File
       );
       
-      toast.success("Documents processed successfully! Redirecting to download page...");
       console.log('Processing result:', result);
       
-      // Redirect to output page after successful processing
-      if (result.redirect_to) {
-        setTimeout(() => {
-          window.location.href = result.redirect_to;
-        }, 2000);
+      if (result.success) {
+        toast.success("Documents processed successfully! Redirecting to download page...");
+        
+        // Redirect to output page with session ID
+        if (result.redirect_to) {
+          setTimeout(() => {
+            window.location.href = result.redirect_to;
+          }, 2000);
+        }
+      } else {
+        toast.error(result.message || "Processing failed. Please try again.");
       }
       
     } catch (error) {
       console.error('Error processing documents:', error);
-      toast.error("Failed to process documents. Please try again.");
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      toast.error(`Failed to process documents: ${errorMessage}`);
     } finally {
       setIsProcessing(false);
     }

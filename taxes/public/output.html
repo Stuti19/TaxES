@@ -81,11 +81,24 @@
 
         const DownloadSection = () => {
             const [downloading, setDownloading] = useState(false);
+            const [sessionId, setSessionId] = useState(null);
+
+            useEffect(() => {
+                // Get session ID from URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const session = urlParams.get('session');
+                setSessionId(session);
+            }, []);
 
             const handleDownload = async () => {
+                if (!sessionId) {
+                    alert('Session expired. Please process documents again.');
+                    return;
+                }
+                
                 setDownloading(true);
                 try {
-                    const response = await fetch('http://localhost:8000/download-excel');
+                    const response = await fetch(`http://localhost:8000/download-excel?session=${sessionId}`);
                     if (response.ok) {
                         const blob = await response.blob();
                         const url = window.URL.createObjectURL(blob);
@@ -96,6 +109,12 @@
                         link.click();
                         document.body.removeChild(link);
                         window.URL.revokeObjectURL(url);
+                        
+                        // Show success message and redirect after download
+                        setTimeout(() => {
+                            alert('Download complete! Session files have been cleaned up.');
+                            window.location.href = '/';
+                        }, 1000);
                     } else {
                         alert('Error downloading file. Please try again.');
                     }

@@ -3,12 +3,12 @@ const API_BASE_URL = 'http://localhost:8000';
 export interface UploadDocumentsResponse {
   success: boolean;
   message: string;
-  uploaded_files: Array<{
-    document_type: string;
-    filename: string;
-    s3_key: string;
-    s3_url: string;
-  }>;
+  session_id?: string;
+  extraction_results?: any;
+  parsing_results?: any;
+  excel_result?: any;
+  output_files?: any;
+  redirect_to?: string;
 }
 
 export const uploadDocumentsToAPI = async (
@@ -17,20 +17,45 @@ export const uploadDocumentsToAPI = async (
   passbookFile: File,
   form16File: File
 ): Promise<UploadDocumentsResponse> => {
-  const formData = new FormData();
-  formData.append('user_id', userId);
-  formData.append('aadhar', aadharFile);
-  formData.append('passbook', passbookFile);
-  formData.append('form16', form16File);
+  try {
+    const formData = new FormData();
+    formData.append('user_id', userId);
+    formData.append('aadhar', aadharFile);
+    formData.append('passbook', passbookFile);
+    formData.append('form16', form16File);
 
-  const response = await fetch(`${API_BASE_URL}/process-documents`, {
-    method: 'POST',
-    body: formData,
-  });
+    console.log('Sending request to:', `${API_BASE_URL}/process-documents`);
+    
+    const response = await fetch(`${API_BASE_URL}/process-documents`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
 
-  if (!response.ok) {
-    throw new Error(`Processing failed: ${response.statusText}`);
+    console.log('Response status:', response.status);
+    
+    const responseText = await response.text();
+    console.log('Raw response:', responseText);
+    
+    if (!response.ok) {
+      console.error('Response error:', responseText);
+      throw new Error(`Processing failed: ${response.statusText}`);
+    }
+
+    let result;
+    try {
+      result = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      throw new Error('Invalid response format from server');
+    }
+    
+    console.log('Parsed response data:', result);
+    return result;
+  } catch (error) {
+    console.error('API call error:', error);
+    throw error;
   }
-
-  return response.json();
 };

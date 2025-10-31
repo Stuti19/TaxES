@@ -4,28 +4,38 @@ import shutil
 from pathlib import Path
 import subprocess
 import sys
+import uuid
 
 class DocumentProcessor:
-    def __init__(self):
-        self.base_dir = Path("taxes_files")
+    def __init__(self, session_id=None):
+        self.session_id = session_id or str(uuid.uuid4())
+        self.base_dir = Path("taxes_files") / self.session_id
         self.uploads_dir = self.base_dir / "uploads"
         self.extracted_dir = self.base_dir / "extracted_data"
         self.parsed_dir = self.base_dir / "parsed"
+        self.excel_dir = self.base_dir / "excel"
         
         # Create directories if they don't exist
-        for directory in [self.uploads_dir, self.extracted_dir, self.parsed_dir]:
+        for directory in [self.uploads_dir, self.extracted_dir, self.parsed_dir, self.excel_dir]:
             directory.mkdir(parents=True, exist_ok=True)
         
-        # Clear existing files to avoid duplicates
-        self._clear_existing_files()
+        print(f"Created session: {self.session_id}")
 
     def save_uploaded_files(self, aadhar_file, passbook_file, form16_file):
         """Save uploaded files with standardized names"""
         try:
+            print(f"Saving files to: {self.uploads_dir}")
+            print(f"Aadhar file: {aadhar_file}")
+            print(f"Passbook file: {passbook_file}")
+            print(f"Form16 file: {form16_file}")
+            
             # Save files with standard names
             shutil.copy2(aadhar_file, self.uploads_dir / "aadhar.pdf")
+            print("Aadhar file saved")
             shutil.copy2(passbook_file, self.uploads_dir / "bank.pdf")
+            print("Passbook file saved")
             shutil.copy2(form16_file, self.uploads_dir / "form16.pdf")
+            print("Form16 file saved")
             
             return {
                 'status': 'success',
@@ -37,6 +47,9 @@ class DocumentProcessor:
                 }
             }
         except Exception as e:
+            print(f"Error saving files: {str(e)}")
+            import traceback
+            traceback.print_exc()
             return {'status': 'error', 'message': str(e)}
 
     def run_extractors(self):
@@ -127,7 +140,7 @@ class DocumentProcessor:
         try:
             print("Starting Excel generation...")
             from excel_filler_local import ExcelFiller
-            filler = ExcelFiller()
+            filler = ExcelFiller(session_id=self.session_id)
             result = filler.fill_itr_excel()
             print(f"Excel generation result: {result}")
             return result
@@ -137,45 +150,50 @@ class DocumentProcessor:
             traceback.print_exc()
             return {'status': 'error', 'message': str(e)}
 
-    def _clear_existing_files(self):
-        """Clear existing files to avoid duplicates"""
-        # Clear uploads
-        for file_path in self.uploads_dir.glob("*.pdf"):
-            file_path.unlink(missing_ok=True)
-        
-        # Clear extracted data
-        for file_path in self.extracted_dir.glob("*.json"):
-            file_path.unlink(missing_ok=True)
-        
-        # Clear parsed data
-        for file_path in self.parsed_dir.glob("*.json"):
-            file_path.unlink(missing_ok=True)
-        
-        # Clear excel files
-        excel_dir = self.base_dir / "excel"
-        if excel_dir.exists():
-            for file_path in excel_dir.glob("*.xlsx"):
-                file_path.unlink(missing_ok=True)
+    def cleanup_session(self):
+        """Delete all session files and directories"""
+        try:
+            if self.base_dir.exists():
+                shutil.rmtree(self.base_dir)
+                print(f"Cleaned up session: {self.session_id}")
+        except Exception as e:
+            print(f"Error cleaning up session {self.session_id}: {e}")
 
     def process_documents(self, aadhar_file, passbook_file, form16_file):
         """Complete document processing pipeline"""
-        # Step 1: Save files
-        save_result = self.save_uploaded_files(aadhar_file, passbook_file, form16_file)
-        if save_result['status'] != 'success':
-            return save_result
+        try:
+            # Step 1: Save files
+            print(f"Step 1: Saving files for session {self.session_id}")
+            save_result = self.save_uploaded_files(aadhar_file, passbook_file, form16_file)
+            if save_result['status'] != 'success':
+                print(f"File save failed: {save_result['message']}")
+                return save_result
+            print("Files saved successfully")
 
-        # Step 2: Run extractors
-        extraction_results = self.run_extractors()
-        
-        # Step 3: Run parsers
-        parsing_results = self.run_parsers()
-        
-        # Step 4: Generate Excel
-        excel_result = self.generate_excel()
+            # Step 2: Run extractors
+            print("Step 2: Running extractors")
+            extraction_results = self.run_extractors()
+            print(f"Extraction results: {extraction_results}")
+            
+            # Step 3: Run parsers
+            print("Step 3: Running parsers")
+            parsing_results = self.run_parsers()
+            print(f"Parsing results: {parsing_results}")
+            
+            # Step 4: Generate Excel
+            print("Step 4: Generating Excel")
+            excel_result = self.generate_excel()
+            print(f"Excel result: {excel_result}")
+        except Exception as e:
+            print(f"Error in process_documents: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return {'status': 'error', 'message': str(e)}
 
         return {
             'status': 'success',
             'message': 'Document processing completed',
+            'session_id': self.session_id,
             'extraction_results': extraction_results,
             'parsing_results': parsing_results,
             'excel_result': excel_result,
@@ -189,7 +207,7 @@ class DocumentProcessor:
                     'passbook': str(self.parsed_dir / "passbook_parsed.json"),
                     'aadhar': str(self.parsed_dir / "aadhar_parsed.json")
                 },
-                'excel': str(self.base_dir / "excel" / "filled_itr.xlsx")
+                'excel': str(self.excel_dir / "filled_itr.xlsx")
             }
         }
 
