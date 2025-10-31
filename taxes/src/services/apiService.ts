@@ -14,22 +14,22 @@ export interface UploadDocumentsResponse {
 export const uploadDocumentsToAPI = async (
   userId: string,
   aadharFile: File,
-  panFile: File,
+  passbookFile: File,
   form16File: File
 ): Promise<UploadDocumentsResponse> => {
   const formData = new FormData();
   formData.append('user_id', userId);
   formData.append('aadhar', aadharFile);
-  formData.append('pan', panFile);
+  formData.append('passbook', passbookFile);
   formData.append('form16', form16File);
 
-  const response = await fetch(`${API_BASE_URL}/upload-documents`, {
+  const response = await fetch(`${API_BASE_URL}/process-documents`, {
     method: 'POST',
     body: formData,
   });
 
   if (!response.ok) {
-    throw new Error(`Upload failed: ${response.statusText}`);
+    throw new Error(`Processing failed: ${response.statusText}`);
   }
 
   return response.json();

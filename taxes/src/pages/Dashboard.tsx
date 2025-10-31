@@ -123,8 +123,15 @@ export const Dashboard = () => {
         form16File
       );
       
-      toast.success("Documents uploaded successfully! Starting ITR processing...");
-      console.log('Upload result:', result);
+      toast.success("Documents processed successfully! Redirecting to download page...");
+      console.log('Processing result:', result);
+      
+      // Redirect to output page after successful processing
+      if (result.redirect_to) {
+        setTimeout(() => {
+          window.location.href = result.redirect_to;
+        }, 2000);
+      }
       
     } catch (error) {
       console.error('Error processing documents:', error);
