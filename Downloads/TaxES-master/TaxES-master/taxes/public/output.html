@@ -82,7 +82,7 @@
             </ul>
         </div>
 
-        <a href="http://localhost:8080" class="text-blue-600 hover:text-blue-800 underline text-sm">
+        <a href="/" class="text-blue-600 hover:text-blue-800 underline text-sm">
             ← Back to Dashboard
         </a>
     </main>
@@ -95,6 +95,9 @@
     </footer>
 
     <script>
+        window.BACKEND_URL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://taxes1.onrender.com';
+    </script>
+    <script>
         async function downloadExcel() {
             const btn = document.getElementById('downloadBtn');
             const btnText = document.getElementById('btnText');
@@ -102,7 +105,8 @@
             btnText.textContent = 'Downloading...';
 
             try {
-                const response = await fetch('http://localhost:8000/download-excel');
+                const backendUrl = window.BACKEND_URL || 'http://localhost:8000';
+                const response = await fetch(backendUrl + '/download-excel');
                 if (!response.ok) throw new Error('Download failed');
 
                 const blob = await response.blob();
