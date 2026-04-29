@@ -77,11 +77,10 @@ class ExcelFiller:
                 "relief_section_89": "AO146"
             }
             
-            # Aadhar cell mapping
+            # Aadhar cell mapping (removed address - will parse into components instead)
             aadhar_mapping = {
                 "aadhar_number": "AN8",
-                "dob": "AN11",
-                "address": "O11"
+                "dob": "AN11"
             }
             
             # Deductions that need dual cells
@@ -103,8 +102,8 @@ class ExcelFiller:
                     ws[cell_address] = form16_data[json_key]
             
             # Parse Aadhar data using Groq
-            parsed_name = {}
-            parsed_address = {}
+            parsed_name = None
+            parsed_address = None
             
             try:
                 import time
@@ -112,37 +111,50 @@ class ExcelFiller:
                 parser = GroqParser()
                 
                 if "name" in aadhar_data and aadhar_data["name"]:
-                    print("Waiting 30s before name parsing...")
-                    time.sleep(30)
+                    print("Waiting 2s before name parsing...")
+                    time.sleep(2)
                     parsed_name = parser.parse_name(aadhar_data["name"])
                     print(f"Parsed name: {parsed_name}")
                 
                 if "address" in aadhar_data and aadhar_data["address"]:
-                    print("Waiting 30s before address parsing...")
-                    time.sleep(30)
+                    print("Waiting 2s before address parsing...")
+                    time.sleep(2)
                     parsed_address = parser.parse_address(aadhar_data["address"])
                     print(f"Parsed address: {parsed_address}")
             except Exception as e:
                 print(f"Groq parsing error: {e}")
+                import traceback
+                traceback.print_exc()
             
             # Fill Aadhar data
             for json_key, cell_address in aadhar_mapping.items():
                 if json_key in aadhar_data and aadhar_data[json_key]:
                     ws[cell_address] = aadhar_data[json_key]
             
-            # Fill parsed name (prioritize Aadhar, fallback to passbook)
-            if parsed_name:
+            # Fill parsed name (prioritize Aadhar, fallback to passbook, fallback to simple split)
+            if parsed_name and parsed_name.get("first_name"):
+                # Use Groq-parsed name from Aadhar
                 ws["E7"] = parsed_name.get("first_name", "")
                 ws["O7"] = parsed_name.get("middle_name", "")
                 ws["Y7"] = parsed_name.get("last_name", "")
+                print(f"Filled name fields from Groq-parsed Aadhar: {parsed_name}")
+            elif "name" in aadhar_data and aadhar_data["name"]:
+                # Use simple parsing from Aadhar name if Groq failed
+                first_name, middle_name, last_name = self._parse_name(aadhar_data["name"])
+                ws["E7"] = first_name
+                ws["O7"] = middle_name
+                ws["Y7"] = last_name
+                print(f"Filled name fields from simple-parsed Aadhar: {first_name}, {middle_name}, {last_name}")
             elif "name" in passbook_data and passbook_data["name"]:
+                # Fallback to passbook name if Aadhar name not available
                 first_name, middle_name, last_name = self._parse_name(passbook_data["name"])
                 ws["E7"] = first_name
                 ws["O7"] = middle_name
                 ws["Y7"] = last_name
+                print(f"Filled name fields from passbook: {first_name}, {middle_name}, {last_name}")
             
             # Fill parsed address components
-            if parsed_address:
+            if parsed_address and parsed_address.get("flat_door_block_no") or parsed_address.get("premises_building_village") or parsed_address.get("state"):
                 ws["E11"] = parsed_address.get("flat_door_block_no", "")  # Flat/Door/Block No
                 ws["O11"] = parsed_address.get("premises_building_village", "")  # Building/Village name
                 ws["E13"] = parsed_address.get("road_street_post_office", "")
@@ -150,6 +162,18 @@ class ExcelFiller:
                 ws["AN13"] = parsed_address.get("town_city_district", "")
                 ws["E15"] = parsed_address.get("state", "")
                 ws["AA15"] = parsed_address.get("pin_code", "")
+                print(f"Filled address fields from Groq-parsed Aadhar: {parsed_address}")
+            elif "address" in aadhar_data and aadhar_data["address"]:
+                # Fallback to simple address parsing if Groq failed
+                fallback_address = self._parse_address(aadhar_data["address"])
+                ws["E11"] = fallback_address.get("flat_door_block_no", "")
+                ws["O11"] = fallback_address.get("premises_building_village", "")
+                ws["E13"] = fallback_address.get("road_street_post_office", "")
+                ws["W13"] = fallback_address.get("area_locality", "")
+                ws["AN13"] = fallback_address.get("town_city_district", "")
+                ws["E15"] = fallback_address.get("state", "")
+                ws["AA15"] = fallback_address.get("pin_code", "")
+                print(f"Filled address fields from simple-parsed Aadhar: {fallback_address}")
             
             # Fill dual cells for deductions
             for json_key, cell_addresses in dual_cell_mapping.items():
@@ -264,6 +288,66 @@ class ExcelFiller:
             return name_parts[0], "", name_parts[1]
         else:
             return name_parts[0], " ".join(name_parts[1:-1]), name_parts[-1]
+
+    def _parse_address(self, address):
+        """Fallback address parsing - extract components from raw address string"""
+        import re
+        
+        result = {
+            "flat_door_block_no": "",
+            "premises_building_village": "",
+            "road_street_post_office": "",
+            "area_locality": "",
+            "town_city_district": "",
+            "state": "",
+            "pin_code": ""
+        }
+        
+        if not address:
+            return result
+        
+        # Extract PIN code (6 digits)
+        pin_match = re.search(r'\b(\d{6})\b', address)
+        if pin_match:
+            result["pin_code"] = pin_match.group(1)
+        
+        # Split by comma to get address parts
+        parts = [part.strip() for part in address.split(',') if part.strip()]
+        
+        # Try to identify state from common patterns or known states
+        indian_states = [
+            'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+            'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
+            'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya',
+            'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim',
+            'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand',
+            'West Bengal', 'Delhi', 'Chandigarh', 'Ladakh', 'Jammu and Kashmir'
+        ]
+        
+        # Search for state name in address
+        for state in indian_states:
+            if state.upper() in address.upper():
+                result["state"] = state
+                break
+        
+        # Extract flat/door number (first number followed by optional letter)
+        flat_match = re.search(r'\b(\d+[A-Z]?)\b', address)
+        if flat_match:
+            result["flat_door_block_no"] = flat_match.group(1)
+        
+        # Try to fill parts based on position
+        if len(parts) >= 1:
+            result["premises_building_village"] = parts[0]
+        if len(parts) >= 2:
+            result["road_street_post_office"] = parts[1]
+        if len(parts) >= 3:
+            result["area_locality"] = parts[2]
+        if len(parts) >= 4:
+            result["town_city_district"] = parts[3]
+        if len(parts) >= 5 and not result["state"]:
+            result["state"] = parts[4]
+        
+        return result
 
     def fill_user_input_sections(self, excel_path, user_inputs):
         """
@@ -465,11 +549,10 @@ class ExcelFiller:
                 "relief_section_89": "AO146"
             }
             
-            # Aadhar mappings
+            # Aadhar mappings (removed address - will parse into components)
             aadhar_mapping = {
                 "aadhar_number": "AN8",
-                "dob": "AN11",
-                "address": "O11"
+                "dob": "AN11"
             }
             
             # Helper to safely set merged cells
@@ -508,6 +591,96 @@ class ExcelFiller:
                         print(f"  Filled {field_name}: {cell_ref}")
                     except Exception as e:
                         print(f"  Warning: Could not fill {field_name}: {str(e)}")
+            
+            # ─── Parse and Fill Name Fields (Groq + Fallback) ───────
+            parsed_name = None
+            try:
+                if "name" in aadhar_data and aadhar_data["name"]:
+                    import time
+                    from groq_parser import GroqParser
+                    parser = GroqParser()
+                    print("Parsing name with Groq API...")
+                    time.sleep(1)  # Brief delay to avoid rate limiting
+                    parsed_name = parser.parse_name(aadhar_data["name"])
+                    print(f"  Groq parsed name: {parsed_name}")
+            except Exception as e:
+                print(f"  Groq name parsing error: {e}")
+                import traceback
+                traceback.print_exc()
+            
+            # Fill name fields with proper fallback
+            if parsed_name and parsed_name.get("first_name"):
+                try:
+                    set_cell_value(ws, "E7", parsed_name.get("first_name", ""))
+                    set_cell_value(ws, "O7", parsed_name.get("middle_name", ""))
+                    set_cell_value(ws, "Y7", parsed_name.get("last_name", ""))
+                    print(f"  Filled name fields from Groq-parsed Aadhar: {parsed_name}")
+                except Exception as e:
+                    print(f"  Warning: Could not fill parsed name fields: {str(e)}")
+            elif "name" in aadhar_data and aadhar_data["name"]:
+                # Fallback to simple parsing
+                try:
+                    first_name, middle_name, last_name = self._parse_name(aadhar_data["name"])
+                    set_cell_value(ws, "E7", first_name)
+                    set_cell_value(ws, "O7", middle_name)
+                    set_cell_value(ws, "Y7", last_name)
+                    print(f"  Filled name fields from simple-parsed Aadhar: {first_name}, {middle_name}, {last_name}")
+                except Exception as e:
+                    print(f"  Warning: Could not fill simple parsed name: {str(e)}")
+            elif "name" in passbook_data and passbook_data["name"]:
+                # Last resort: passbook name
+                try:
+                    first_name, middle_name, last_name = self._parse_name(passbook_data["name"])
+                    set_cell_value(ws, "E7", first_name)
+                    set_cell_value(ws, "O7", middle_name)
+                    set_cell_value(ws, "Y7", last_name)
+                    print(f"  Filled name fields from passbook: {first_name}, {middle_name}, {last_name}")
+                except Exception as e:
+                    print(f"  Warning: Could not fill passbook name: {str(e)}")
+            
+            # ─── Parse and Fill Address Fields (Groq + Fallback) ───
+            parsed_address = None
+            try:
+                if "address" in aadhar_data and aadhar_data["address"]:
+                    import time
+                    from groq_parser import GroqParser
+                    parser = GroqParser()
+                    print("Parsing address with Groq API...")
+                    time.sleep(1)  # Brief delay to avoid rate limiting
+                    parsed_address = parser.parse_address(aadhar_data["address"])
+                    print(f"  Groq parsed address: {parsed_address}")
+            except Exception as e:
+                print(f"  Groq address parsing error: {e}")
+                import traceback
+                traceback.print_exc()
+            
+            # Fill address fields with proper fallback
+            if parsed_address and (parsed_address.get("flat_door_block_no") or parsed_address.get("premises_building_village") or parsed_address.get("state")):
+                try:
+                    set_cell_value(ws, "E11", parsed_address.get("flat_door_block_no", ""))
+                    set_cell_value(ws, "O11", parsed_address.get("premises_building_village", ""))
+                    set_cell_value(ws, "E13", parsed_address.get("road_street_post_office", ""))
+                    set_cell_value(ws, "W13", parsed_address.get("area_locality", ""))
+                    set_cell_value(ws, "AN13", parsed_address.get("town_city_district", ""))
+                    set_cell_value(ws, "E15", parsed_address.get("state", ""))
+                    set_cell_value(ws, "AA15", parsed_address.get("pin_code", ""))
+                    print(f"  Filled address fields from Groq-parsed Aadhar: {parsed_address}")
+                except Exception as e:
+                    print(f"  Warning: Could not fill Groq parsed address: {str(e)}")
+            elif "address" in aadhar_data and aadhar_data["address"]:
+                # Fallback to simple address parsing
+                try:
+                    fallback_address = self._parse_address(aadhar_data["address"])
+                    set_cell_value(ws, "E11", fallback_address.get("flat_door_block_no", ""))
+                    set_cell_value(ws, "O11", fallback_address.get("premises_building_village", ""))
+                    set_cell_value(ws, "E13", fallback_address.get("road_street_post_office", ""))
+                    set_cell_value(ws, "W13", fallback_address.get("area_locality", ""))
+                    set_cell_value(ws, "AN13", fallback_address.get("town_city_district", ""))
+                    set_cell_value(ws, "E15", fallback_address.get("state", ""))
+                    set_cell_value(ws, "AA15", fallback_address.get("pin_code", ""))
+                    print(f"  Filled address fields from simple-parsed Aadhar: {fallback_address}")
+                except Exception as e:
+                    print(f"  Warning: Could not fill simple parsed address: {str(e)}")
             
             # Fill contact info
             try:

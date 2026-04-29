@@ -29,8 +29,8 @@ print("form16_parsed.json saved")
 print(json.dumps(form16_parsed, indent=2))
 
 # ── Step 2: Passbook ──────────────────────────────────────────
-print("\nWaiting 30s before next API call...")
-import time; time.sleep(30)
+print("\nWaiting 2s before next API call...")
+import time; time.sleep(2)
 print("Extracting Passbook...")
 from passbook_extractor_local import PassbookExtractorLocal
 result = PassbookExtractorLocal().extract_passbook_data(str(PASSBOOK_PDF))
@@ -43,8 +43,8 @@ print("passbook_parsed.json saved")
 print(json.dumps(passbook_parsed, indent=2))
 
 # ── Step 3: Aadhar ────────────────────────────────────────────
-print("\nWaiting 30s before next API call...")
-import time; time.sleep(30)
+print("\nWaiting 2s before next API call...")
+import time; time.sleep(2)
 print("Extracting Aadhar...")
 from aadhar_extractor_local import AadharExtractorLocal
 result = AadharExtractorLocal().extract_aadhar_data(str(AADHAR_PDF))
