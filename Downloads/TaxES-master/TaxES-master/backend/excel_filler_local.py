@@ -264,3 +264,322 @@ class ExcelFiller:
             return name_parts[0], "", name_parts[1]
         else:
             return name_parts[0], " ".join(name_parts[1:-1]), name_parts[-1]
+
+    def fill_user_input_sections(self, excel_path, user_inputs):
+        """
+        Fill user-provided input sections into Excel file
+        
+        Args:
+            excel_path: Path to the Excel file to update
+            user_inputs: Dict with structure:
+                {
+                    "house_property": {...},
+                    "other_income": {...},
+                    "deductions": {...}
+                }
+        
+        Returns:
+            Dict with status and message
+        """
+        try:
+            # Load field mappings
+            import json
+            from pathlib import Path
+            mappings_path = Path(__file__).parent / "config_field_mappings.json"
+            
+            if not mappings_path.exists():
+                return {'status': 'error', 'message': 'Field mappings file not found'}
+            
+            with open(mappings_path, 'r') as f:
+                field_mappings = json.load(f)
+            
+            # Load the workbook
+            print(f"Loading Excel file for user input filling: {excel_path}")
+            wb = load_workbook(str(excel_path))
+            ws = wb.active
+            
+            # Helper function to safely set cell value (handling merged cells)
+            def set_cell_value(worksheet, cell_ref, value):
+                """Set cell value, handling merged cells"""
+                # Find if this cell is in any merged range
+                merged_range_to_unmerge = None
+                for merged_range in worksheet.merged_cells.ranges:
+                    if cell_ref in merged_range:
+                        merged_range_to_unmerge = merged_range
+                        break
+                
+                if merged_range_to_unmerge:
+                    # Unmerge, set value, re-merge
+                    worksheet.unmerge_cells(str(merged_range_to_unmerge))
+                    worksheet[cell_ref] = value
+                    worksheet.merge_cells(str(merged_range_to_unmerge))
+                else:
+                    # Not merged, just set it
+                    worksheet[cell_ref] = value
+            
+            # Fill House Property section
+            if "house_property" in user_inputs and user_inputs["house_property"]:
+                hp_data = user_inputs["house_property"]
+                hp_mappings = field_mappings.get("house_property", {})
+                
+                for field_name, cell_ref in hp_mappings.items():
+                    if field_name in hp_data and hp_data[field_name] is not None:
+                        value = hp_data[field_name]
+                        # Handle boolean property_type specially
+                        if field_name == "property_type":
+                            value = str(value)
+                        try:
+                            set_cell_value(ws, cell_ref, value)
+                            print(f"Filled {field_name}: {cell_ref} = {value}")
+                        except Exception as e:
+                            print(f"Warning: Could not fill {field_name} at {cell_ref}: {str(e)}")
+            
+            # Fill Other Income section
+            if "other_income" in user_inputs and user_inputs["other_income"]:
+                oi_data = user_inputs["other_income"]
+                oi_mappings = field_mappings.get("other_income", {})
+                
+                for field_name, cell_ref in oi_mappings.items():
+                    if field_name in oi_data and oi_data[field_name] is not None:
+                        value = oi_data[field_name]
+                        try:
+                            set_cell_value(ws, cell_ref, value)
+                            print(f"Filled {field_name}: {cell_ref} = {value}")
+                        except Exception as e:
+                            print(f"Warning: Could not fill {field_name} at {cell_ref}: {str(e)}")
+            
+            # Fill Deductions section
+            if "deductions" in user_inputs and user_inputs["deductions"]:
+                ded_data = user_inputs["deductions"]
+                ded_mappings = field_mappings.get("deductions", {})
+                
+                for field_name, cell_ref in ded_mappings.items():
+                    if field_name in ded_data and ded_data[field_name] is not None:
+                        value = ded_data[field_name]
+                        try:
+                            set_cell_value(ws, cell_ref, value)
+                            print(f"Filled {field_name}: {cell_ref} = {value}")
+                        except Exception as e:
+                            print(f"Warning: Could not fill {field_name} at {cell_ref}: {str(e)}")
+            
+            # Save updated workbook
+            print(f"Saving updated Excel file: {excel_path}")
+            wb.save(str(excel_path))
+            print("User input sections filled successfully")
+            
+            return {
+                'status': 'success',
+                'message': 'User input sections filled successfully'
+            }
+        
+        except Exception as e:
+            print(f"Error filling user input sections: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return {
+                'status': 'error',
+                'message': f'Error filling user input sections: {str(e)}'
+            }
+
+    def fill_itr_complete(self, parsed_data_dir, user_inputs, email='', mobile_no=''):
+        """
+        Complete ITR filling: Merge extracted document data + user inputs into Excel
+        
+        Args:
+            parsed_data_dir: Path to directory containing form16_parsed.json, etc.
+            user_inputs: Dict with house_property, other_income, deductions
+            email: User email
+            mobile_no: User mobile number
+        
+        Returns:
+            Dict with status and file path
+        """
+        try:
+            import json
+            from pathlib import Path
+            
+            parsed_data_dir = Path(parsed_data_dir)
+            
+            # Load extracted data from JSONs
+            form16_path = parsed_data_dir / "form16_parsed.json"
+            aadhar_path = parsed_data_dir / "aadhar_parsed.json"
+            passbook_path = parsed_data_dir / "passbook_parsed.json"
+            
+            form16_data = {}
+            aadhar_data = {}
+            passbook_data = {}
+            
+            if form16_path.exists():
+                with open(form16_path, 'r') as f:
+                    form16_data = json.load(f)
+            
+            if aadhar_path.exists():
+                with open(aadhar_path, 'r') as f:
+                    aadhar_data = json.load(f)
+            
+            if passbook_path.exists():
+                with open(passbook_path, 'r') as f:
+                    passbook_data = json.load(f)
+            
+            # Load template
+            template_path = Path(self.excel_dir) / "itr_temp.xlsx"
+            if not template_path.exists():
+                # Try from backend root directory
+                template_path = Path(__file__).parent / "itr_temp.xlsx"
+            if not template_path.exists():
+                # Try alternate names
+                for name in ["itr_template.xlsm", "itr_template.xlsx", "itr_temp.xlsm"]:
+                    alt_path = Path(__file__).parent / name
+                    if alt_path.exists():
+                        template_path = alt_path
+                        break
+            if not template_path.exists():
+                return {'status': 'error', 'message': f'Excel template not found. Searched for: itr_temp.xlsx'}
+            
+            print(f"Loading template: {template_path}")
+            wb = load_workbook(str(template_path))
+            ws = wb.active
+            
+            # ─── Fill Extracted Data ───────────────────────────────
+            print("Filling extracted document data...")
+            
+            # Form 16 mappings
+            form16_mapping = {
+                "pan": "AN7",
+                "employee_address": "O11",
+                "gross_salary": "AO35",
+                "salary_section_17_1": "AO36",
+                "prerequisites_section_17_2": "AO37",
+                "profits_section_17_3": "AO38",
+                "total_exemption_section_10": "AO45",
+                "net_salary": "AO52",
+                "deduction_under_sec16": "AO53",
+                "standard_deduction_16_ia": "AO54",
+                "entertainment_allowance_16_ii": "AO55",
+                "tax_on_employment_16_iii": "AO56",
+                "income_chargeable_salaries": "AO57",
+                "gross_total_income": "AO93",
+                "tax_on_total_income": "AO140",
+                "rebate_87A": "AO141",
+                "health_education_cess": "AO144",
+                "relief_section_89": "AO146"
+            }
+            
+            # Aadhar mappings
+            aadhar_mapping = {
+                "aadhar_number": "AN8",
+                "dob": "AN11",
+                "address": "O11"
+            }
+            
+            # Helper to safely set merged cells
+            def set_cell_value(worksheet, cell_ref, value):
+                """Set cell value, handling merged cells"""
+                # Find if this cell is in any merged range
+                merged_range_to_unmerge = None
+                for merged_range in worksheet.merged_cells.ranges:
+                    if cell_ref in merged_range:
+                        merged_range_to_unmerge = merged_range
+                        break
+                
+                if merged_range_to_unmerge:
+                    # Unmerge, set value, re-merge
+                    worksheet.unmerge_cells(str(merged_range_to_unmerge))
+                    worksheet[cell_ref] = value
+                    worksheet.merge_cells(str(merged_range_to_unmerge))
+                else:
+                    # Not merged, just set it
+                    worksheet[cell_ref] = value
+            
+            # Fill Form16 data
+            for field_name, cell_ref in form16_mapping.items():
+                if field_name in form16_data and form16_data[field_name]:
+                    try:
+                        set_cell_value(ws, cell_ref, form16_data[field_name])
+                        print(f"  Filled {field_name}: {cell_ref}")
+                    except Exception as e:
+                        print(f"  Warning: Could not fill {field_name}: {str(e)}")
+            
+            # Fill Aadhar data
+            for field_name, cell_ref in aadhar_mapping.items():
+                if field_name in aadhar_data and aadhar_data[field_name]:
+                    try:
+                        set_cell_value(ws, cell_ref, aadhar_data[field_name])
+                        print(f"  Filled {field_name}: {cell_ref}")
+                    except Exception as e:
+                        print(f"  Warning: Could not fill {field_name}: {str(e)}")
+            
+            # Fill contact info
+            try:
+                set_cell_value(ws, "AN9", email)
+                set_cell_value(ws, "AN10", mobile_no)
+                print(f"  Filled contact: email={email}, mobile={mobile_no}")
+            except Exception as e:
+                print(f"  Warning: Could not fill contact: {str(e)}")
+            
+            # ─── Fill User Inputs ──────────────────────────────────
+            print("Filling user input data...")
+            
+            mappings_path = Path(__file__).parent / "config_field_mappings.json"
+            if mappings_path.exists():
+                with open(mappings_path, 'r') as f:
+                    field_mappings = json.load(f)
+                
+                # Fill House Property
+                if "house_property" in user_inputs and user_inputs["house_property"]:
+                    hp_data = user_inputs["house_property"]
+                    hp_mappings = field_mappings.get("house_property", {})
+                    
+                    for field_name, cell_ref in hp_mappings.items():
+                        if field_name in hp_data and hp_data[field_name] is not None:
+                            try:
+                                set_cell_value(ws, cell_ref, hp_data[field_name])
+                                print(f"  Filled {field_name}: {cell_ref}")
+                            except Exception as e:
+                                print(f"  Warning: Could not fill {field_name}: {str(e)}")
+                
+                # Fill Other Income
+                if "other_income" in user_inputs and user_inputs["other_income"]:
+                    oi_data = user_inputs["other_income"]
+                    oi_mappings = field_mappings.get("other_income", {})
+                    
+                    for field_name, cell_ref in oi_mappings.items():
+                        if field_name in oi_data and oi_data[field_name] is not None:
+                            try:
+                                set_cell_value(ws, cell_ref, oi_data[field_name])
+                                print(f"  Filled {field_name}: {cell_ref}")
+                            except Exception as e:
+                                print(f"  Warning: Could not fill {field_name}: {str(e)}")
+                
+                # Fill Deductions
+                if "deductions" in user_inputs and user_inputs["deductions"]:
+                    ded_data = user_inputs["deductions"]
+                    ded_mappings = field_mappings.get("deductions", {})
+                    
+                    for field_name, cell_ref in ded_mappings.items():
+                        if field_name in ded_data and ded_data[field_name] is not None:
+                            try:
+                                set_cell_value(ws, cell_ref, ded_data[field_name])
+                                print(f"  Filled {field_name}: {cell_ref}")
+                            except Exception as e:
+                                print(f"  Warning: Could not fill {field_name}: {str(e)}")
+            
+            # Save completed Excel
+            output_path = Path(self.excel_dir) / "filled_itr.xlsx"
+            wb.save(str(output_path))
+            print(f"\n✓ Complete ITR form filled and saved: {output_path}")
+            
+            return {
+                'status': 'success',
+                'message': 'Complete ITR form filled successfully',
+                'file_path': str(output_path)
+            }
+        
+        except Exception as e:
+            print(f"Error in complete ITR filling: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return {
+                'status': 'error',
+                'message': f'Error filling complete ITR: {str(e)}'
+            }

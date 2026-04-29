@@ -1,0 +1,49 @@
+{
+  "house_property": {
+    "gross_rent_receivable": "AO59",
+    "tax_paid_local_authorities": "AO60",
+    "annual_value": "AO61",
+    "deduction_30_percent": "AO62",
+    "interest_on_borrowed_capital": "AO63",
+    "arrears_unrealised_rent": "AO64",
+    "income_chargeable": "AO65"
+  },
+  "other_income": {
+    "nature_of_income_1": "J68",
+    "description_income_1": "Z68",
+    "amount_income_1": "AO68",
+    "nature_of_income_2": "J69",
+    "description_income_2": "Z69",
+    "amount_income_2": "AO69",
+    "nature_of_income_3": "J70",
+    "description_income_3": "Z70",
+    "amount_income_3": "AO70",
+    "nature_of_income_4": "J71",
+    "description_income_4": "Z71",
+    "amount_income_4": "AO71",
+    "dividend_income_1": "T13",
+    "dividend_income_2": "T14",
+    "dividend_income_3": "T15",
+    "dividend_income_4": "T16",
+    "dividend_income_5": "T17"
+  },
+  "deductions": {
+    "80C": "AB96",
+    "80CCC": "AB97",
+    "80CCD1": "AB98",
+    "80CCD1B": "AB99",
+    "80CCD2": "AB101",
+    "80D": "AB104",
+    "80DD": "AB108",
+    "80DDB": "AB109",
+    "80E": "AB111",
+    "80EE": "AB112",
+    "80G": "AB115",
+    "80GG": "AB116",
+    "80GGC": "AB119",
+    "80TTA": "AB122",
+    "80U": "AB124",
+    "80CCH": "AB125",
+    "other_deductions": "AB126"
+  }
+}
