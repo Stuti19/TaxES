@@ -11,6 +11,11 @@ export interface UploadDocumentsResponse {
   redirect_to?: string;
 }
 
+export interface WizardSectionResponse {
+  success: boolean;
+  message: string;
+}
+
 export const uploadDocumentsToAPI = async (
   userId: string,
   aadharFile: File,
@@ -61,6 +66,110 @@ export const uploadDocumentsToAPI = async (
     return result;
   } catch (error) {
     console.error('API call error:', error);
+    throw error;
+  }
+};
+
+// ────────────── WIZARD API ENDPOINTS ──────────────
+
+export const saveHousePropertyInput = async (
+  data: Record<string, any>
+): Promise<WizardSectionResponse> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/user-inputs/house-property`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to save house property data');
+    }
+
+    return result;
+  } catch (error) {
+    console.error('House property API error:', error);
+    throw error;
+  }
+};
+
+export const saveOtherIncomeInput = async (
+  data: Record<string, any>
+): Promise<WizardSectionResponse> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/user-inputs/other-income`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to save other income data');
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Other income API error:', error);
+    throw error;
+  }
+};
+
+export const saveDeductionsInput = async (
+  data: Record<string, any>
+): Promise<WizardSectionResponse> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/user-inputs/deductions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to save deductions data');
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Deductions API error:', error);
+    throw error;
+  }
+};
+
+export const fillExcelWithInputs = async (): Promise<WizardSectionResponse> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/fill-excel-with-inputs`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({}),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to fill Excel with user inputs');
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Fill Excel API error:', error);
     throw error;
   }
 };

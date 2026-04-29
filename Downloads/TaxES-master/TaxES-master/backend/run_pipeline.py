@@ -56,27 +56,12 @@ with open(FINAL_DIR / "aadhar_parsed.json", "w") as f:
 print("aadhar_parsed.json saved")
 print(json.dumps(aadhar_parsed, indent=2))
 
-# ── Step 4: Fill Excel ────────────────────────────────────────
-print("\nFilling Excel...")
-from excel_filler_local import ExcelFiller
+# ── Step 4: Save Parsed Data ────────────────────────────
+print("\nParsed data extraction complete!")
+print("JSONs saved:")
+print(f"  • form16_parsed.json")
+print(f"  • passbook_parsed.json")
+print(f"  • aadhar_parsed.json")
+print("\nWaiting for user to complete wizard form...")
+print("Excel will be generated when user clicks 'Finish & Generate Excel'")
 
-# Read contact info if available
-contact_file = FINAL_DIR / 'contact.json'
-email, mobile_no = '', ''
-if contact_file.exists():
-    with open(contact_file) as f:
-        contact = json.load(f)
-    email = contact.get('email', '')
-    mobile_no = contact.get('mobile_no', '')
-    print(f"Contact info: email={email}, mobile={mobile_no}")
-
-# Point ExcelFiller to the final/ folder
-filler = ExcelFiller()
-filler.parsed_dir = FINAL_DIR
-filler.excel_dir = FINAL_DIR
-
-result = filler.fill_itr_excel(email=email, mobile_no=mobile_no)
-if result['status'] == 'success':
-    print("Excel saved to:", result['file_path'])
-else:
-    print("Excel generation failed:", result['message'])

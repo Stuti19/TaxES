@@ -19,7 +19,11 @@ import {
   Trash2
 } from "lucide-react";
 import { toast } from "sonner";
-import { uploadDocumentsToAPI } from "@/services/apiService";
+import { uploadDocumentsToAPI, saveHousePropertyInput, saveOtherIncomeInput, saveDeductionsInput, fillExcelWithInputs } from "@/services/apiService";
+import { WizardLayout } from "@/components/WizardLayout";
+import { HousePropertyForm } from "@/components/HousePropertyForm";
+import { OtherIncomeForm } from "@/components/OtherIncomeForm";
+import { DeductionsForm } from "@/components/DeductionsForm";
 
 interface UploadedFile {
   id: string;
@@ -37,6 +41,13 @@ export const Dashboard = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [email, setEmail] = useState("");
   const [mobileNo, setMobileNo] = useState("");
+
+  // Wizard state
+  const [showWizard, setShowWizard] = useState(false);
+  const [wizardStep, setWizardStep] = useState(1);
+  const [wizardLoading, setWizardLoading] = useState(false);
+
+  const wizardSteps = ["House Property", "Other Income", "Deductions"];
 
   const documentTypes = [
     {
@@ -161,10 +172,11 @@ export const Dashboard = () => {
       console.log('Processing result:', result);
       
       if (result.success) {
-        toast.success("Documents processed successfully! Redirecting to download page...");
-        setTimeout(() => {
-          window.location.href = 'http://localhost:8080/output.html';
-        }, 2000);
+        toast.success("Documents processed! Now please fill in additional details...");
+        // Show wizard instead of redirecting
+        setShowWizard(true);
+        setWizardStep(1);
+        setUploadedFiles([]); // Clear uploaded files from display
       } else {
         toast.error(result.message || "Processing failed. Please try again.");
       }
@@ -178,8 +190,94 @@ export const Dashboard = () => {
     }
   };
 
+  // Wizard handlers
+  const handleWizardNext = async (formData: Record<string, any>) => {
+    setWizardLoading(true);
+    try {
+      let apiCall;
+      if (wizardStep === 1) {
+        apiCall = saveHousePropertyInput(formData);
+      } else if (wizardStep === 2) {
+        apiCall = saveOtherIncomeInput(formData);
+      } else {
+        apiCall = saveDeductionsInput(formData);
+      }
+
+      const result = await apiCall;
+      
+      if (result.success) {
+        toast.success(result.message);
+        if (wizardStep < 3) {
+          setWizardStep(wizardStep + 1);
+        }
+        return true;
+      } else {
+        toast.error(result.message);
+        return false;
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast.error(`Error: ${errorMessage}`);
+      return false;
+    } finally {
+      setWizardLoading(false);
+    }
+  };
+
+  const handleWizardFinish = async () => {
+    setWizardLoading(true);
+    try {
+      const result = await fillExcelWithInputs();
+      
+      if (result.success) {
+        toast.success("Excel file generated successfully!");
+        // Redirect to output page
+        setTimeout(() => {
+          window.location.href = 'http://localhost:8080/output.html';
+        }, 1500);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast.error(`Error: ${errorMessage}`);
+    } finally {
+      setWizardLoading(false);
+    }
+  };
+
+  const handleWizardBack = () => {
+    if (wizardStep > 1) {
+      setWizardStep(wizardStep - 1);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/3">
+    <>
+      {showWizard ? (
+        <WizardLayout
+          currentStep={wizardStep}
+          totalSteps={3}
+          stepTitles={wizardSteps}
+          onBack={handleWizardBack}
+          onNext={async (data) => {
+            // This will be called by form's onSave
+          }}
+          onFinish={handleWizardFinish}
+          isLoading={wizardLoading}
+        >
+          {wizardStep === 1 && (
+            <HousePropertyForm onSave={handleWizardNext} isLoading={wizardLoading} />
+          )}
+          {wizardStep === 2 && (
+            <OtherIncomeForm onSave={handleWizardNext} isLoading={wizardLoading} />
+          )}
+          {wizardStep === 3 && (
+            <DeductionsForm onSave={handleWizardNext} onFinish={handleWizardFinish} isLoading={wizardLoading} />
+          )}
+        </WizardLayout>
+      ) : (
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/3">
       {/* Professional Header */}
       <header className="border-b bg-card/95 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div className="container flex h-16 items-center justify-between">
@@ -435,5 +533,7 @@ export const Dashboard = () => {
         </div>
       </div>
     </div>
+      )}
+    </>
   );
 };
