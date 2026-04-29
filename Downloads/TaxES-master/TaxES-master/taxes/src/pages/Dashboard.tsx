@@ -144,8 +144,9 @@ export const Dashboard = () => {
     setIsProcessing(true);
     
     // Test server connectivity first
+    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
     try {
-      const testResponse = await fetch('http://localhost:8000/health');
+      const testResponse = await fetch(`${backendUrl}/health`);
       if (!testResponse.ok) {
         throw new Error('Server not reachable');
       }
@@ -233,7 +234,7 @@ export const Dashboard = () => {
         toast.success("Excel file generated successfully!");
         // Redirect to output page
         setTimeout(() => {
-          window.location.href = 'http://localhost:8080/output.html';
+          window.location.href = '/output.html';
         }, 1500);
       } else {
         toast.error(result.message);
