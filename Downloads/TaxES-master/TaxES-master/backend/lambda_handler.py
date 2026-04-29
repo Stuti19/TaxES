@@ -1,5 +1,5 @@
 import json
-from form16_extractor import Form16Extractor
+from form16_extractor_local import Form16ExtractorLocal
 
 def lambda_handler(event, context):
     """
@@ -21,20 +21,11 @@ def lambda_handler(event, context):
                 'body': json.dumps({'error': 'user_id is required'})
             }
         
-        extractor = Form16Extractor()
+        extractor = Form16ExtractorLocal()
         
-        # Override bucket if provided
-        if event.get('bucket_name'):
-            extractor.bucket_name = event['bucket_name']
-        
-        # Use custom document key if provided
-        if event.get('document_key'):
-            document_key = event['document_key']
-        else:
-            document_key = f"{user_id}/form16.pdf"
-        
-        # Extract data
-        result = extractor.extract_form16_data(user_id)
+        # Extract data from the provided PDF path
+        pdf_path = event.get('pdf_path', f"{user_id}/form16.pdf")
+        result = extractor.extract_form16_data(pdf_path)
         
         if result['status'] == 'success':
             return {

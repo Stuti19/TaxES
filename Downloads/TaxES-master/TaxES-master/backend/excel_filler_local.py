@@ -23,9 +23,9 @@ class ExcelFiller:
         try:
             # Set template path
             if template_path is None:
-                template_path = Path("itr_temp.xlsx")
+                template_path = Path("itr1_template.xlsm")
                 if not template_path.exists():
-                    return {'status': 'error', 'message': 'Excel template not found'}
+                    return {'status': 'error', 'message': 'Excel template itr1_template.xlsm not found'}
             
             # Load JSON data
             form16_path = self.parsed_dir / "form16_parsed.json"

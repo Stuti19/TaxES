@@ -1,8 +1,6 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os
-import subprocess
-import sys
 from pathlib import Path
 
 app = Flask(__name__)
@@ -54,20 +52,22 @@ def process_documents():
             json.dump({'email': email, 'mobile_no': mobile_no}, f)
         print(f"Contact info saved: email={email}, mobile={mobile_no}")
 
-        # Run the pipeline
-        print("Running pipeline...")
-        result = subprocess.run(
-            [sys.executable, str(BACKEND_DIR / 'run_pipeline.py')],
-            cwd=str(BACKEND_DIR),
-            capture_output=False,  # show output directly in terminal
-            text=True,
-            timeout=600
+        # Process documents using DocumentProcessor
+        print("Processing documents...")
+        from document_processor import DocumentProcessor
+        processor = DocumentProcessor()
+        save_result = processor.save_uploaded_files(
+            str(BACKEND_DIR / 'aadhar.pdf'),
+            str(BACKEND_DIR / 'passbook.pdf'),
+            str(BACKEND_DIR / 'form16.pdf')
         )
-
-        excel_path = FINAL_DIR / 'itr_pending.xlsx'
-        # Note: We don't create Excel in pipeline anymore, just extract JSON files
-        # Excel will be created when user completes wizard
-
+        
+        if save_result['status'] != 'success':
+            return jsonify({'success': False, 'message': save_result['message']}), 500
+        
+        extract_result = processor.run_extractors()
+        processor.run_parsers()
+        
         return jsonify({
             'success': True,
             'message': 'Documents processed! Please fill in the additional details.',

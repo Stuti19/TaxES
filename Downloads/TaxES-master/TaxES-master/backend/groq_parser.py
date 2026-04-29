@@ -188,17 +188,3 @@ Return JSON:
             "pin_code": pin_code
         }
 
-def test_parser():
-    """Test the parser with sample data"""
-    parser = GroqParser()
-    
-    # Test name parsing
-    name_result = parser.parse_name("Anjali")
-    print("Name parsing result:", name_result)
-    
-    # Test address parsing with the corrected address
-    address_result = parser.parse_address("DIO Mukesh Kumar H, 15 Ashok Nagar Shahdara Mandoli, Saboli North East Delhi, 110093, help uldal gov In")
-    print("Address parsing result:", address_result)
-
-if __name__ == "__main__":
-    test_parser()
