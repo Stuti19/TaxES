@@ -511,11 +511,58 @@ class ExcelFiller:
             
             # Fill contact info
             try:
-                set_cell_value(ws, "AN9", email)
-                set_cell_value(ws, "AN10", mobile_no)
+                if email:
+                    set_cell_value(ws, "E28", email)
+                if mobile_no:
+                    set_cell_value(ws, "Q28", mobile_no)
                 print(f"  Filled contact: email={email}, mobile={mobile_no}")
             except Exception as e:
                 print(f"  Warning: Could not fill contact: {str(e)}")
+            
+            # Parse and fill name
+            try:
+                import time
+                from groq_parser import GroqParser
+                parser = GroqParser()
+                parsed_name = {}
+                parsed_address = {}
+
+                if aadhar_data.get("name"):
+                    print("Waiting 30s before name parsing...")
+                    time.sleep(30)
+                    parsed_name = parser.parse_name(aadhar_data["name"])
+                    print(f"Parsed name: {parsed_name}")
+
+                if aadhar_data.get("address"):
+                    print("Waiting 30s before address parsing...")
+                    time.sleep(30)
+                    parsed_address = parser.parse_address(aadhar_data["address"])
+                    print(f"Parsed address: {parsed_address}")
+            except Exception as e:
+                print(f"Groq parsing error: {e}")
+                parsed_name = {}
+                parsed_address = {}
+
+            # Fill name
+            if parsed_name:
+                set_cell_value(ws, "E7", parsed_name.get("first_name", ""))
+                set_cell_value(ws, "O7", parsed_name.get("middle_name", ""))
+                set_cell_value(ws, "Y7", parsed_name.get("last_name", ""))
+            elif passbook_data.get("name"):
+                first_name, middle_name, last_name = self._parse_name(passbook_data["name"])
+                set_cell_value(ws, "E7", first_name)
+                set_cell_value(ws, "O7", middle_name)
+                set_cell_value(ws, "Y7", last_name)
+
+            # Fill address components
+            if parsed_address:
+                set_cell_value(ws, "E11", parsed_address.get("flat_door_block_no", ""))
+                set_cell_value(ws, "O11", parsed_address.get("premises_building_village", ""))
+                set_cell_value(ws, "E13", parsed_address.get("road_street_post_office", ""))
+                set_cell_value(ws, "W13", parsed_address.get("area_locality", ""))
+                set_cell_value(ws, "AN13", parsed_address.get("town_city_district", ""))
+                set_cell_value(ws, "E15", parsed_address.get("state", ""))
+                set_cell_value(ws, "AA15", parsed_address.get("pin_code", ""))
             
             # ─── Fill User Inputs ──────────────────────────────────
             print("Filling user input data...")
