@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TaxES - Download ITR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: linear-gradient(to bottom right, #e0f7fa, #fffde7); font-family: 'Segoe UI', sans-serif; }
+        .btn-primary { background: linear-gradient(90deg, #0ea5e9, #10b981); color: white; transition: all 0.3s ease; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16,185,129,0.4); }
+        @keyframes bounce { 0%,100%{transform:translateY(0)} 40%{transform:translateY(-10px)} 60%{transform:translateY(-5px)} }
+        .bounce { animation: bounce 1s ease-in-out; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-cyan-400 via-green-300 to-yellow-200 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-gray-800">TaxES</h1>
+            <span class="text-gray-800 font-medium hidden md:block">ITR Processing Complete</span>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="container mx-auto px-6 py-12 max-w-3xl min-h-screen flex flex-col items-center">
+
+        <!-- Success Icon -->
+        <div class="bounce mb-6">
+            <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center">
+                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+        </div>
+
+        <h2 class="text-4xl font-bold mb-3 text-green-600 text-center">Processing Complete!</h2>
+        <p class="text-center text-gray-600 mb-10 text-lg max-w-xl">
+            Your ITR form has been filled with data extracted from your documents. Download the Excel file below.
+        </p>
+
+        <!-- Download Card -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md text-center mb-6">
+            <div class="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-1">ITR_Form.xlsx</h3>
+            <p class="text-sm text-gray-500 mb-6">Filled ITR Excel form ready for submission</p>
+
+            <button id="downloadBtn" onclick="downloadExcel()"
+                class="btn-primary w-full py-3 px-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                <span id="btnText">Download ITR Excel</span>
+            </button>
+        </div>
+
+        <!-- What's included -->
+        <div class="bg-white rounded-2xl shadow p-6 w-full max-w-md mb-8">
+            <h3 class="font-semibold text-gray-800 mb-3">What's included:</h3>
+            <ul class="space-y-2 text-sm text-gray-600">
+                <li class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    Personal details from Aadhar
+                </li>
+                <li class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    Bank account information from Passbook
+                </li>
+                <li class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    Salary and tax details from Form-16
+                </li>
+                <li class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    All deductions and tax calculations
+                </li>
+            </ul>
+        </div>
+
+        <a href="http://localhost:8080" class="text-blue-600 hover:text-blue-800 underline text-sm">
+            ← Back to Dashboard
+        </a>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-cyan-400 via-green-300 to-yellow-200 text-gray-800 mt-8">
+        <div class="container mx-auto px-6 py-8 text-center text-sm">
+            © 2025 TaxES. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        async function downloadExcel() {
+            const btn = document.getElementById('downloadBtn');
+            const btnText = document.getElementById('btnText');
+            btn.disabled = true;
+            btnText.textContent = 'Downloading...';
+
+            try {
+                const response = await fetch('http://localhost:8000/download-excel');
+                if (!response.ok) throw new Error('Download failed');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'ITR_Form.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                btnText.textContent = 'Downloaded!';
+            } catch (err) {
+                alert('Error downloading file: ' + err.message);
+                btnText.textContent = 'Download ITR Excel';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

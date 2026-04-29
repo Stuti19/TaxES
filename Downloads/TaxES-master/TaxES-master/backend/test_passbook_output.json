@@ -1,0 +1,52 @@
+{
+  "status": "success",
+  "extracted_pairs_count": 8,
+  "data": [
+    {
+      "Key": "Header Text",
+      "Value": "BILICHI",
+      "Confidence": 80
+    },
+    {
+      "Key": "Header Text",
+      "Value": "4/350/3 CHINNAMATHAMPALA",
+      "Confidence": 70
+    },
+    {
+      "Key": "Header Text",
+      "Value": "BILICHI POST",
+      "Confidence": 80
+    },
+    {
+      "Key": "Bank Name",
+      "Value": "Indian Bank",
+      "Confidence": 90
+    },
+    {
+      "Key": "IFSC Code",
+      "Value": "IDIB000B161",
+      "Confidence": 90
+    },
+    {
+      "Key": "Account Holder Name",
+      "Value": "DIPAK KUMAR JENA",
+      "Confidence": 90
+    },
+    {
+      "Key": "Account Number",
+      "Value": "6218804286",
+      "Confidence": 90
+    },
+    {
+      "Key": "Branch Name",
+      "Value": "BILICHI",
+      "Confidence": 80
+    }
+  ],
+  "parsed": {
+    "name": "Indian Bank",
+    "accountNumber": "6218804286",
+    "bankName": "Indian Bank",
+    "IFSC_Code": "IDIB000B161"
+  }
+}
